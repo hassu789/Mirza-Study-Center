@@ -25,7 +25,7 @@ export default function Home() {
     { value: '10+', label: 'Years Experience', icon: '🏆' },
     { value: '5000+', label: 'Students Taught', icon: '👨‍🎓' },
     { value: '95%', label: 'Results', icon: '📈' },
-    { value: '8', label: 'Expert Teachers', icon: '👨‍🏫' },
+    { value: '8+', label: 'Expert Teachers', icon: '👨‍🏫' },
   ];
 
   const features = [

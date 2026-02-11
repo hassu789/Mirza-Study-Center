@@ -14,7 +14,7 @@ export default function AboutPage() {
     { value: '10+', label: 'Years of Excellence', icon: '🏆' },
     { value: '5000+', label: 'Students Taught', icon: '👨‍🎓' },
     { value: '95%', label: 'Results', icon: '📈' },
-    { value: '8', label: 'Expert Teachers', icon: '👨‍🏫' },
+    { value: '8+', label: 'Expert Teachers', icon: '👨‍🏫' },
   ];
 
   const values = [
@@ -122,7 +122,7 @@ export default function AboutPage() {
                 trusted institution serving thousands of students.
               </p>
               <p className="mb-4 text-slate-600 dark:text-slate-400">
-                Our team of 8 experienced educators are passionate about helping students succeed.
+                Our team of 8+ experienced educators are passionate about helping students succeed.
                 We believe in individual attention, comprehensive study materials, and a supportive
                 learning environment. We prepare students for CBSE, ICSE & U.P. Board examinations.
               </p>
