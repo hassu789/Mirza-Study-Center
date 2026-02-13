@@ -1,10 +1,11 @@
 import dns from 'dns';
 import { MongoClient, MongoClientOptions } from 'mongodb';
 
-// Only in development: use Google DNS
+// FIX: Use Google & Cloudflare DNS in development
+// WHY: Mobile hotspot DNS (e.g. 172.20.10.1) can't resolve MongoDB's SRV records
 if (process.env.NODE_ENV === 'development') {
   try {
-    dns.setServers(['8.8.8.8', '1.1.1.1']);
+    dns.setServers(['8.8.8.8', '1.1.1.1', '8.8.4.4']);
   } catch {
     // Ignore DNS setting errors
   }
@@ -19,9 +20,9 @@ if (!uri) {
 const options: MongoClientOptions = {
   retryWrites: true,
   retryReads: true,
-  serverSelectionTimeoutMS: 8000,
-  connectTimeoutMS: 8000,
-  socketTimeoutMS: 8000,
+  serverSelectionTimeoutMS: 15000,
+  connectTimeoutMS: 15000,
+  socketTimeoutMS: 15000,
   tls: true,
   maxPoolSize: 10,
   minPoolSize: 1,

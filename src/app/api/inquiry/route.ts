@@ -1,8 +1,5 @@
 import { NextResponse } from 'next/server';
-import { connectToDatabase } from '@/lib/mongodb';
-
-// Vercel: allow up to 10s (Hobby plan max)
-export const maxDuration = 10;
+import { StudentInquiry } from '@/data/courses';
 
 // ============================================
 // INQUIRY API - /api/inquiry
@@ -105,7 +102,7 @@ export async function POST(request: Request) {
     }
     return NextResponse.json(
       { success: false, error: 'Failed to submit inquiry. Please try again.' },
-      { status: 500 }
+      { status: 500 } // 500 = Server Error (something went wrong on our side)
     );
   }
 }
