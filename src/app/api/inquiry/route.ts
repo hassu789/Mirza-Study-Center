@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { StudentInquiry } from '@/data/courses';
+import { connectToDatabase } from '@/lib/mongodb';
 
 // ============================================
 // INQUIRY API - /api/inquiry
