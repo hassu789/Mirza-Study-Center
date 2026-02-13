@@ -94,11 +94,18 @@ export async function POST(request: Request) {
       },
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Inquiry error:', error);
+    const errorMessage = error instanceof Error ? error.message : '';
+    if (errorMessage.includes('ECONNRESET') || errorMessage.includes('ECONNREFUSED') || errorMessage.includes('timed out')) {
+      return NextResponse.json(
+        { success: false, error: 'Unable to connect to database. If testing locally, please try on the deployed Vercel site.' },
+        { status: 503 }
+      );
+    }
     return NextResponse.json(
       { success: false, error: 'Failed to submit inquiry. Please try again.' },
-      { status: 500 } // 500 = Server Error (something went wrong on our side)
+      { status: 500 }
     );
   }
 }
@@ -129,8 +136,15 @@ export async function GET() {
       inquiries: inquiries,
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error fetching inquiries:', error);
+    const errorMessage = error instanceof Error ? error.message : '';
+    if (errorMessage.includes('ECONNRESET') || errorMessage.includes('ECONNREFUSED') || errorMessage.includes('timed out')) {
+      return NextResponse.json(
+        { success: false, error: 'Unable to connect to database.' },
+        { status: 503 }
+      );
+    }
     return NextResponse.json(
       { success: false, error: 'Failed to fetch inquiries' },
       { status: 500 }

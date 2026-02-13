@@ -3,7 +3,11 @@ import { MongoClient, MongoClientOptions } from 'mongodb';
 
 // Only in development: use Google DNS
 if (process.env.NODE_ENV === 'development') {
-  dns.setServers(['8.8.8.8', '1.1.1.1']);
+  try {
+    dns.setServers(['8.8.8.8', '1.1.1.1']);
+  } catch {
+    // Ignore DNS setting errors
+  }
 }
 
 const uri = process.env.MONGODB_URI;
@@ -17,28 +21,37 @@ const options: MongoClientOptions = {
   retryReads: true,
   serverSelectionTimeoutMS: 8000,
   connectTimeoutMS: 8000,
+  socketTimeoutMS: 8000,
   tls: true,
+  maxPoolSize: 10,
+  minPoolSize: 1,
 };
 
-const client = new MongoClient(uri, options);
-
-// LAZY connection: only connect when first needed (not at module load)
-// WHY: Prevents build-time connection attempts (which fail on restricted networks)
+// Cache connection on global - works for both dev (hot reload) and production (serverless)
 const globalWithMongo = global as typeof globalThis & {
+  _mongoClient?: MongoClient;
   _mongoClientPromise?: Promise<MongoClient>;
 };
 
 function getClientPromise(): Promise<MongoClient> {
   if (!globalWithMongo._mongoClientPromise) {
-    globalWithMongo._mongoClientPromise = client.connect();
+    globalWithMongo._mongoClient = new MongoClient(uri!, options);
+    globalWithMongo._mongoClientPromise = globalWithMongo._mongoClient.connect();
   }
   return globalWithMongo._mongoClientPromise;
 }
 
 export async function connectToDatabase() {
-  const connectedClient = await getClientPromise();
-  const db = connectedClient.db('mirza-study-centre');
-  return { db, client: connectedClient };
+  try {
+    const client = await getClientPromise();
+    const db = client.db('mirza-study-centre');
+    return { db, client };
+  } catch (error) {
+    // If connection failed, clear the cached promise so next call retries
+    globalWithMongo._mongoClientPromise = undefined;
+    globalWithMongo._mongoClient = undefined;
+    throw error;
+  }
 }
 
 export default getClientPromise;

@@ -69,8 +69,15 @@ export async function POST(request: Request) {
       message: 'Password has been reset successfully. You can now login with your new password.',
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Forgot password error:', error);
+    const errorMessage = error instanceof Error ? error.message : '';
+    if (errorMessage.includes('ECONNRESET') || errorMessage.includes('ECONNREFUSED') || errorMessage.includes('timed out')) {
+      return NextResponse.json(
+        { success: false, error: 'Unable to connect to database. If testing locally, please try on the deployed Vercel site.' },
+        { status: 503 }
+      );
+    }
     return NextResponse.json(
       { success: false, error: 'Something went wrong. Please try again.' },
       { status: 500 }
