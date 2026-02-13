@@ -1,130 +1,104 @@
 import { NextResponse } from 'next/server';
+import bcrypt from 'bcryptjs';
+import { connectToDatabase } from '@/lib/mongodb';
 
 // ============================================
 // SIGNUP API - /api/auth/signup
-// ============================================
-// This API handles user registration
-// Method: POST
-// Body: { name, email, password }
+// Saves user to MongoDB with hashed password
 // ============================================
 
-// Dummy database (in real app, use actual database like PostgreSQL)
-// This array simulates a database table
-const users: Array<{
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-  createdAt: string;
-}> = [
-  // Pre-existing users (same as login API)
-  { id: '1', name: 'Admin User', email: 'admin@mirzastudycentre.com', password: 'admin123', createdAt: '2024-01-01' },
-  { id: '2', name: 'John Doe', email: 'john@example.com', password: 'john123', createdAt: '2024-01-15' },
-];
+export const maxDuration = 10;
 
-// POST function handles POST requests to /api/auth/signup
 export async function POST(request: Request) {
   try {
-    // ==========================================
-    // STEP 1: Get data from request body
-    // ==========================================
+    // Step 1: Get data from request
     const body = await request.json();
     const { name, email, password } = body;
 
-    // ==========================================
-    // STEP 2: Validate required fields
-    // ==========================================
+    // Step 2: Validate required fields
     if (!name || !email || !password) {
       return NextResponse.json(
-        {
-          success: false,
-          error: 'All fields are required (name, email, password)',
-        },
-        { status: 400 } // 400 = Bad Request
+        { success: false, error: 'All fields are required (name, email, password)' },
+        { status: 400 }
       );
     }
 
-    // ==========================================
-    // STEP 3: Validate email format
-    // ==========================================
+    // Step 3: Validate name (no numbers)
+    if (/\d/.test(name)) {
+      return NextResponse.json(
+        { success: false, error: 'Name cannot contain numbers' },
+        { status: 400 }
+      );
+    }
+
+    if (name.trim().length < 2) {
+      return NextResponse.json(
+        { success: false, error: 'Name must be at least 2 characters' },
+        { status: 400 }
+      );
+    }
+
+    // Step 4: Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json(
-        {
-          success: false,
-          error: 'Please enter a valid email address',
-        },
+        { success: false, error: 'Please enter a valid email address' },
         { status: 400 }
       );
     }
 
-    // ==========================================
-    // STEP 4: Validate password strength
-    // ==========================================
+    // Step 5: Validate password strength
     if (password.length < 6) {
       return NextResponse.json(
-        {
-          success: false,
-          error: 'Password must be at least 6 characters long',
-        },
+        { success: false, error: 'Password must be at least 6 characters long' },
         { status: 400 }
       );
     }
 
-    // ==========================================
-    // STEP 5: Check if user already exists
-    // ==========================================
-    const existingUser = users.find((user) => user.email === email);
+    // Step 6: Connect to MongoDB
+    const { db } = await connectToDatabase();
+    const usersCollection = db.collection('users');
+
+    // Step 7: Check if email already exists
+    const existingUser = await usersCollection.findOne({ email: email.toLowerCase() });
     if (existingUser) {
       return NextResponse.json(
-        {
-          success: false,
-          error: 'An account with this email already exists',
-        },
-        { status: 409 } // 409 = Conflict
+        { success: false, error: 'An account with this email already exists. Please login instead.' },
+        { status: 409 }
       );
     }
 
-    // ==========================================
-    // STEP 6: Create new user
-    // ==========================================
-    const newUser = {
-      id: String(users.length + 1), // Generate simple ID
-      name: name,
-      email: email,
-      password: password, // In real app: hash with bcrypt!
-      createdAt: new Date().toISOString(),
-    };
+    // Step 8: Hash the password
+    // WHY? Never store passwords in plain text. bcrypt creates a one-way hash.
+    // Even if someone sees the database, they can't read the actual password.
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Add to our "database" (in real app: save to actual database)
-    users.push(newUser);
+    // Step 9: Save user to MongoDB
+    const result = await usersCollection.insertOne({
+      name: name.trim(),
+      email: email.toLowerCase().trim(),
+      password: hashedPassword,
+      createdAt: new Date(),
+    });
 
-    // ==========================================
-    // STEP 7: Return success response
-    // ==========================================
-    // Never return the password in response!
+    console.log('New user registered:', result.insertedId);
+
+    // Step 10: Return success (never return the password!)
     return NextResponse.json({
       success: true,
       message: 'Account created successfully',
       user: {
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
-        createdAt: newUser.createdAt,
+        id: result.insertedId.toString(),
+        name: name.trim(),
+        email: email.toLowerCase().trim(),
       },
     });
 
   } catch (error) {
-    // ==========================================
-    // STEP 8: Handle unexpected errors
-    // ==========================================
     console.error('Signup error:', error);
     return NextResponse.json(
-      {
-        success: false,
-        error: 'Something went wrong. Please try again.',
-      },
-      { status: 500 } // 500 = Server Error
+      { success: false, error: 'Something went wrong. Please try again.' },
+      { status: 500 }
     );
   }
 }

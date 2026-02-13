@@ -3,31 +3,38 @@ import bcrypt from 'bcryptjs';
 import { connectToDatabase } from '@/lib/mongodb';
 
 // ============================================
-// LOGIN API - /api/auth/login
-// Validates user credentials against MongoDB
+// FORGOT PASSWORD API - /api/auth/forgot-password
+// Allows user to reset password if they know their email
 // ============================================
 
 export const maxDuration = 10;
 
 export async function POST(request: Request) {
   try {
-    // Step 1: Get data from request
     const body = await request.json();
-    const { email, password } = body;
+    const { email, newPassword } = body;
 
-    // Step 2: Validate required fields
-    if (!email || !password) {
+    // Step 1: Validate fields
+    if (!email || !newPassword) {
       return NextResponse.json(
-        { success: false, error: 'Email and password are required' },
+        { success: false, error: 'Email and new password are required' },
         { status: 400 }
       );
     }
 
-    // Step 3: Validate email format
+    // Step 2: Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json(
         { success: false, error: 'Please enter a valid email address' },
+        { status: 400 }
+      );
+    }
+
+    // Step 3: Validate new password
+    if (newPassword.length < 6) {
+      return NextResponse.json(
+        { success: false, error: 'Password must be at least 6 characters long' },
         { status: 400 }
       );
     }
@@ -42,34 +49,28 @@ export async function POST(request: Request) {
     if (!user) {
       return NextResponse.json(
         { success: false, error: 'No account found with this email. Please sign up first.' },
-        { status: 401 }
+        { status: 404 }
       );
     }
 
-    // Step 6: Compare password with stored hash
-    // WHY bcrypt.compare? It checks if the plain password matches the hashed version
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    // Step 6: Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    if (!isPasswordValid) {
-      return NextResponse.json(
-        { success: false, error: 'Incorrect password. Please try again.' },
-        { status: 401 }
-      );
-    }
+    // Step 7: Update password in database
+    await usersCollection.updateOne(
+      { email: email.toLowerCase().trim() },
+      { $set: { password: hashedPassword, updatedAt: new Date() } }
+    );
 
-    // Step 7: Success - return user data (never include password!)
+    console.log('Password reset for user:', user.email);
+
     return NextResponse.json({
       success: true,
-      message: 'Login successful',
-      user: {
-        id: user._id.toString(),
-        name: user.name,
-        email: user.email,
-      },
+      message: 'Password has been reset successfully. You can now login with your new password.',
     });
 
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('Forgot password error:', error);
     return NextResponse.json(
       { success: false, error: 'Something went wrong. Please try again.' },
       { status: 500 }

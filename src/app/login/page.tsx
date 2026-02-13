@@ -6,15 +6,15 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import AnimatedSection from '@/components/AnimatedSection';
 import { images } from '@/data/images';
-import { validateUsername, validatePassword } from '@/utils/validation';
+import { validateEmail, validatePassword } from '@/utils/validation';
 
 export default function LoginPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: '',
   });
-  const [errors, setErrors] = useState<{ username?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -23,8 +23,8 @@ export default function LoginPage() {
   // Redirect if already authenticated
   useEffect(() => {
     const isAuthenticated = localStorage.getItem('isAuthenticated');
-    const username = localStorage.getItem('username');
-    if (isAuthenticated === 'true' && username) {
+    const user = localStorage.getItem('user');
+    if (isAuthenticated === 'true' && user) {
       router.push('/feed');
     } else {
       setIsCheckingAuth(false);
@@ -32,10 +32,10 @@ export default function LoginPage() {
   }, [router]);
 
   // Real-time validation handlers
-  const handleUsernameChange = (value: string) => {
-    setFormData({ ...formData, username: value });
-    const validation = validateUsername(value);
-    setErrors({ ...errors, username: validation.isValid ? undefined : validation.error });
+  const handleEmailChange = (value: string) => {
+    setFormData({ ...formData, email: value });
+    const validation = validateEmail(value);
+    setErrors({ ...errors, email: validation.isValid ? undefined : validation.error });
   };
 
   const handlePasswordChange = (value: string) => {
@@ -47,10 +47,9 @@ export default function LoginPage() {
   const handleBlur = (field: string) => {
     setTouched({ ...touched, [field]: true });
     
-    // Validate on blur
-    if (field === 'username') {
-      const validation = validateUsername(formData.username);
-      setErrors({ ...errors, username: validation.isValid ? undefined : validation.error });
+    if (field === 'email') {
+      const validation = validateEmail(formData.email);
+      setErrors({ ...errors, email: validation.isValid ? undefined : validation.error });
     } else if (field === 'password') {
       const validation = validatePassword(formData.password);
       setErrors({ ...errors, password: validation.isValid ? undefined : validation.error });
@@ -62,16 +61,16 @@ export default function LoginPage() {
     setError('');
 
     // Validate fields
-    const usernameValidation = validateUsername(formData.username);
+    const emailValidation = validateEmail(formData.email);
     const passwordValidation = validatePassword(formData.password);
 
-    const newErrors: { username?: string; password?: string } = {};
-    if (!usernameValidation.isValid) newErrors.username = usernameValidation.error;
+    const newErrors: { email?: string; password?: string } = {};
+    if (!emailValidation.isValid) newErrors.email = emailValidation.error;
     if (!passwordValidation.isValid) newErrors.password = passwordValidation.error;
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      setTouched({ username: true, password: true });
+      setTouched({ email: true, password: true });
       return;
     }
 
@@ -87,9 +86,8 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (data.success) {
-        // Set authentication state consistently
         localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('username', data.user.username || data.user.name);
+        localStorage.setItem('username', data.user.name);
         localStorage.setItem('user', JSON.stringify(data.user));
         router.push('/feed');
       } else {
@@ -160,30 +158,35 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Username <span className="text-red-400">*</span>
+                  Email Address <span className="text-red-400">*</span>
                 </label>
                 <input
-                  type="text"
+                  type="email"
                   required
-                  value={formData.username}
-                  onChange={(e) => handleUsernameChange(e.target.value)}
-                  onBlur={() => handleBlur('username')}
+                  value={formData.email}
+                  onChange={(e) => handleEmailChange(e.target.value)}
+                  onBlur={() => handleBlur('email')}
                   className={`w-full rounded-xl border px-4 py-3 text-white placeholder-slate-400 backdrop-blur transition-all focus:bg-white/15 focus:outline-none focus:ring-2 ${
-                    errors.username && touched.username
+                    errors.email && touched.email
                       ? 'border-red-500/50 bg-red-500/10 focus:border-red-500 focus:ring-red-500/20'
                       : 'border-white/20 bg-white/10 focus:border-violet-500 focus:ring-violet-500/20'
                   }`}
-                  placeholder="Enter your username"
+                  placeholder="Enter your email"
                 />
-                {errors.username && touched.username && (
-                  <p className="mt-1 text-xs text-red-300">{errors.username}</p>
+                {errors.email && touched.email && (
+                  <p className="mt-1 text-xs text-red-300">{errors.email}</p>
                 )}
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-300">
-                  Password <span className="text-red-400">*</span>
-                </label>
+                <div className="mb-2 flex items-center justify-between">
+                  <label className="block text-sm font-medium text-slate-300">
+                    Password <span className="text-red-400">*</span>
+                  </label>
+                  <Link href="/forgot-password" className="text-xs text-violet-400 transition-colors hover:text-violet-300">
+                    Forgot password?
+                  </Link>
+                </div>
                 <input
                   type="password"
                   required
@@ -228,13 +231,6 @@ export default function LoginPage() {
                   Sign up
                 </Link>
               </p>
-            </div>
-
-            {/* Demo credentials */}
-            <div className="mt-6 rounded-xl bg-white/5 border border-white/10 p-4">
-              <p className="text-xs font-semibold uppercase text-slate-400 mb-2">Demo Credentials</p>
-              <p className="text-sm text-slate-300"><span className="text-slate-400">Username:</span> demo</p>
-              <p className="text-sm text-slate-300"><span className="text-slate-400">Password:</span> demo123</p>
             </div>
           </div>
 
