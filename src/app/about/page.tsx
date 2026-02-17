@@ -197,16 +197,17 @@ export default function AboutPage() {
               <AnimatedCard key={member.name} index={index} baseDelay={50} staggerDelay={50}>
                 <div className="h-full rounded-2xl border border-slate-200 bg-white p-4 text-center dark:border-zinc-800 dark:bg-zinc-900 sm:p-6">
                   <div className="relative mx-auto mb-3 h-20 w-20 overflow-hidden rounded-full border-4 border-violet-200 shadow-lg dark:border-violet-800 sm:mb-4 sm:h-28 sm:w-28">
-                    <img
+                    <Image
                       src={teacherImages[member.id] || images.teachers.male1}
                       alt={member.name}
-                      className="h-full w-full object-cover"
+                      fill
+                      className="object-cover"
                     />
                   </div>
                   <h3 className="mb-1 text-sm font-bold text-slate-900 dark:text-white sm:text-lg">{member.name}</h3>
                   <p className="mb-1 text-xs font-semibold text-violet-600 dark:text-violet-400 sm:mb-2 sm:text-sm">{member.subject} Expert</p>
                   <p className="mb-0.5 text-[10px] text-slate-500 dark:text-slate-400 sm:mb-1 sm:text-xs">{member.qualification}</p>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 sm:text-xs">{member.experience} of experience</p>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 sm:text-xs">{member.experience} experience</p>
                 </div>
               </AnimatedCard>
             ))}

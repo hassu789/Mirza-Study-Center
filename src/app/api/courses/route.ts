@@ -57,7 +57,7 @@ export async function GET(request: Request) {
       courses: filteredCourses,
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error fetching courses:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch courses' },

@@ -18,6 +18,18 @@ export const metadata: Metadata = {
   icons: {
     icon: '/icon.svg',
   },
+  openGraph: {
+    title: "Mirza Study Centre - Best Coaching in Azamgarh",
+    description: "Expert coaching for Class 6-12 & BSc in Physics, Chemistry, Biology, Mathematics, English & Commerce. Beside Shibli Inter College, Pandey Bazar, Azamgarh.",
+    type: "website",
+    locale: "en_IN",
+    siteName: "Mirza Study Centre",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Mirza Study Centre - Best Coaching in Azamgarh",
+    description: "Expert coaching for Class 6-12 & BSc in Physics, Chemistry, Biology, Mathematics, English & Commerce.",
+  },
 };
 
 export default function RootLayout({

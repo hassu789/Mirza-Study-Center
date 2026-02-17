@@ -21,6 +21,16 @@ export default function ForgotPasswordPage() {
 
   const handleBlur = (field: string) => {
     setTouched({ ...touched, [field]: true });
+    if (field === 'email') {
+      const v = validateEmail(formData.email);
+      setErrors((prev) => ({ ...prev, email: v.isValid ? undefined : v.error }));
+    } else if (field === 'newPassword') {
+      const v = validatePassword(formData.newPassword);
+      setErrors((prev) => ({ ...prev, newPassword: v.isValid ? undefined : v.error }));
+    } else if (field === 'confirmPassword') {
+      const v = validateConfirmPassword(formData.newPassword, formData.confirmPassword);
+      setErrors((prev) => ({ ...prev, confirmPassword: v.isValid ? undefined : v.error }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

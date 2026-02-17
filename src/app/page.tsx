@@ -329,10 +329,11 @@ export default function Home() {
                 <div className="group relative h-full flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white text-center transition-all hover:shadow-2xl hover:-translate-y-2 dark:border-zinc-800 dark:bg-zinc-900">
                   <div className="flex flex-col items-center pt-5 sm:pt-8">
                     <div className="relative mb-3 h-24 w-24 overflow-hidden rounded-full border-4 border-violet-200 shadow-lg transition-transform duration-500 group-hover:scale-110 dark:border-violet-800 sm:mb-4 sm:h-32 sm:w-32">
-                      <img
+                      <Image
                         src={teacherImages[teacher.id] || images.teachers.male1}
                         alt={teacher.name}
-                        className="h-full w-full object-cover"
+                        fill
+                        className="object-cover"
                       />
                     </div>
                     <h3 className="text-sm font-bold text-slate-900 dark:text-white sm:text-lg">{teacher.name}</h3>

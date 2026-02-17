@@ -13,9 +13,9 @@ import { courseImages, images } from '@/data/images';
 
 interface User {
   id: string;
-  username?: string;
   name: string;
   email?: string;
+  role?: string;
 }
 
 export default function FeedPage() {
@@ -24,22 +24,21 @@ export default function FeedPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const isAuthenticated = localStorage.getItem('isAuthenticated');
-    const storedUser = localStorage.getItem('user');
-    
-    if (isAuthenticated === 'true' && storedUser) {
-      setUser(JSON.parse(storedUser));
-    } else {
-      router.push('/login');
-    }
-    setIsLoading(false);
-  }, [router]);
+    fetch('/api/auth/session')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated) {
+          setUser(data.user);
+        }
+        setIsLoading(false);
+      })
+      .catch(() => setIsLoading(false));
+  }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('username');
-    localStorage.removeItem('user');
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
     router.push('/');
+    router.refresh();
   };
 
   if (isLoading) {
@@ -96,7 +95,7 @@ export default function FeedPage() {
               <div>
                 <p className="mb-1 text-xs text-violet-300 sm:text-sm">Welcome back,</p>
                 <h1 className="text-2xl font-bold text-white sm:text-3xl lg:text-4xl">
-                  {user.name || user.username} 👋
+                  {user.name} 👋
                 </h1>
                 <p className="mt-1 text-sm text-slate-300 sm:mt-2 sm:text-base">
                   Ready to continue your learning journey?

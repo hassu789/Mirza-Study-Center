@@ -37,7 +37,7 @@ export async function GET(
       relatedCourses: relatedCourses,
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error fetching course:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch course' },

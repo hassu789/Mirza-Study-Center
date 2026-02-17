@@ -47,7 +47,8 @@ function getClientPromise(): Promise<MongoClient> {
 export async function connectToDatabase() {
   try {
     const client = await getClientPromise();
-    const db = client.db('mirza-study-centre');
+    const dbName = process.env.MONGODB_DB || 'mirza-study-centre';
+    const db = client.db(dbName);
     return { db, client };
   } catch (error) {
     // If connection failed, clear the cached promise so next call retries

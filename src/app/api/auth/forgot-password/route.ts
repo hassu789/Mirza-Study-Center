@@ -1,86 +1,135 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import { connectToDatabase } from '@/lib/mongodb';
-
-// ============================================
-// FORGOT PASSWORD API - /api/auth/forgot-password
-// Allows user to reset password if they know their email
-// ============================================
+import { forgotPasswordRequestSchema, forgotPasswordResetSchema, forgotPasswordDirectSchema } from '@/lib/schemas';
+import { errorResponse, validationError, handleServerError } from '@/lib/api-utils';
+import { rateLimit, getClientIP } from '@/lib/rate-limit';
 
 export const maxDuration = 10;
 
 export async function POST(request: Request) {
   try {
+    // Rate limit: 3 password reset requests per minute per IP
+    const ip = getClientIP(request);
+    const limit = rateLimit(`forgot:${ip}`, { maxRequests: 3, windowMs: 60_000 });
+    if (!limit.allowed) {
+      return errorResponse('Too many requests. Please wait a minute.', 429);
+    }
+
     const body = await request.json();
-    const { email, newPassword } = body;
 
-    // Step 1: Validate fields
-    if (!email || !newPassword) {
-      return NextResponse.json(
-        { success: false, error: 'Email and new password are required' },
-        { status: 400 }
+    // Support two flows:
+    // 1. Token-based: { token, newPassword } — verify token and reset
+    // 2. Direct (legacy): { email, newPassword } — reset directly (kept for backward compatibility)
+
+    if (body.token) {
+      // Flow 1: Token-based reset
+      const parsed = forgotPasswordResetSchema.safeParse(body);
+      if (!parsed.success) return validationError(parsed.error);
+
+      const { token, newPassword } = parsed.data;
+
+      const { db } = await connectToDatabase();
+      const tokensCollection = db.collection('password_reset_tokens');
+
+      // Find valid, non-expired token
+      const tokenDoc = await tokensCollection.findOne({
+        token,
+        expiresAt: { $gt: new Date() },
+        used: false,
+      });
+
+      if (!tokenDoc) {
+        return errorResponse('Invalid or expired reset link. Please request a new one.', 400);
+      }
+
+      // Hash new password and update user
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await db.collection('users').updateOne(
+        { email: tokenDoc.email },
+        { $set: { password: hashedPassword, updatedAt: new Date() } }
       );
+
+      // Mark token as used
+      await tokensCollection.updateOne({ _id: tokenDoc._id }, { $set: { used: true } });
+
+      return NextResponse.json({
+        success: true,
+        message: 'Password has been reset successfully. You can now login with your new password.',
+      });
     }
 
-    // Step 2: Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { success: false, error: 'Please enter a valid email address' },
-        { status: 400 }
+    if (body.email && body.newPassword) {
+      // Flow 2: Direct reset (backward compatible)
+      const parsed = forgotPasswordDirectSchema.safeParse(body);
+      if (!parsed.success) return validationError(parsed.error);
+
+      const { email, newPassword } = parsed.data;
+
+      const { db } = await connectToDatabase();
+      const user = await db.collection('users').findOne({ email });
+
+      if (!user) {
+        return errorResponse('No account found with this email. Please sign up first.', 404);
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await db.collection('users').updateOne(
+        { email },
+        { $set: { password: hashedPassword, updatedAt: new Date() } }
       );
+
+      return NextResponse.json({
+        success: true,
+        message: 'Password has been reset successfully. You can now login with your new password.',
+      });
     }
 
-    // Step 3: Validate new password
-    if (newPassword.length < 6) {
-      return NextResponse.json(
-        { success: false, error: 'Password must be at least 6 characters long' },
-        { status: 400 }
-      );
+    if (body.email && !body.newPassword) {
+      // Flow 3: Request a reset token (for future email integration)
+      const parsed = forgotPasswordRequestSchema.safeParse(body);
+      if (!parsed.success) return validationError(parsed.error);
+
+      const { email } = parsed.data;
+
+      const { db } = await connectToDatabase();
+      const user = await db.collection('users').findOne({ email });
+
+      if (!user) {
+        // Don't reveal whether email exists (security)
+        return NextResponse.json({
+          success: true,
+          message: 'If an account with this email exists, a reset link has been sent.',
+        });
+      }
+
+      // Generate token
+      const token = crypto.randomBytes(32).toString('hex');
+      const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+      await db.collection('password_reset_tokens').insertOne({
+        email,
+        token,
+        expiresAt,
+        used: false,
+        createdAt: new Date(),
+      });
+
+      // TODO: Send email with reset link using Resend
+      // const resetUrl = `${process.env.NEXT_PUBLIC_URL}/forgot-password?token=${token}`;
+      // await sendResetEmail(email, resetUrl);
+
+      return NextResponse.json({
+        success: true,
+        message: 'If an account with this email exists, a reset link has been sent.',
+        // Remove this in production once email is set up:
+        _devToken: process.env.NODE_ENV === 'development' ? token : undefined,
+      });
     }
 
-    // Step 4: Connect to MongoDB
-    const { db } = await connectToDatabase();
-    const usersCollection = db.collection('users');
-
-    // Step 5: Find user by email
-    const user = await usersCollection.findOne({ email: email.toLowerCase().trim() });
-
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'No account found with this email. Please sign up first.' },
-        { status: 404 }
-      );
-    }
-
-    // Step 6: Hash the new password
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-    // Step 7: Update password in database
-    await usersCollection.updateOne(
-      { email: email.toLowerCase().trim() },
-      { $set: { password: hashedPassword, updatedAt: new Date() } }
-    );
-
-    console.log('Password reset for user:', user.email);
-
-    return NextResponse.json({
-      success: true,
-      message: 'Password has been reset successfully. You can now login with your new password.',
-    });
-
+    return errorResponse('Invalid request. Provide email and/or newPassword.', 400);
   } catch (error: unknown) {
-    console.error('Forgot password error:', error);
-    const errorMessage = error instanceof Error ? error.message : '';
-    if (errorMessage.includes('ECONNRESET') || errorMessage.includes('ECONNREFUSED') || errorMessage.includes('timed out')) {
-      return NextResponse.json(
-        { success: false, error: 'Unable to connect to database. If testing locally, please try on the deployed Vercel site.' },
-        { status: 503 }
-      );
-    }
-    return NextResponse.json(
-      { success: false, error: 'Something went wrong. Please try again.' },
-      { status: 500 }
-    );
+    return handleServerError(error);
   }
 }

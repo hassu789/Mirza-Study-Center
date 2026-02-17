@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
@@ -91,6 +92,8 @@ export default function FAQPage() {
                 <div className="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-zinc-800 dark:bg-zinc-900 sm:rounded-2xl">
                   <button
                     onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                    aria-expanded={openIndex === index}
+                    aria-controls={`faq-answer-${index}`}
                     className="flex w-full items-center justify-between gap-3 p-4 text-left transition-colors hover:bg-slate-50 dark:hover:bg-zinc-800 sm:p-6"
                   >
                     <span className="text-sm font-semibold text-slate-900 dark:text-white sm:text-base">{faq.question}</span>
@@ -106,7 +109,7 @@ export default function FAQPage() {
                     </svg>
                   </button>
                   {openIndex === index && (
-                    <div className="border-t border-slate-100 px-4 py-3 dark:border-zinc-800 sm:px-6 sm:py-4">
+                    <div id={`faq-answer-${index}`} role="region" className="border-t border-slate-100 px-4 py-3 dark:border-zinc-800 sm:px-6 sm:py-4">
                       <p className="text-sm text-slate-600 dark:text-slate-400 sm:text-base">{faq.answer}</p>
                     </div>
                   )}
@@ -125,12 +128,12 @@ export default function FAQPage() {
               <p className="mb-4 text-xs text-violet-200 sm:mb-6 sm:text-sm">
                 📞 +91 96702 12323 | 📍 Beside Shibli Inter College, Pandey Bazar, Azamgarh
               </p>
-              <a
+              <Link
                 href="/inquiry"
                 className="inline-block rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-violet-600 transition-all hover:bg-violet-50 sm:px-8 sm:py-3 sm:text-base"
               >
                 Contact Us
-              </a>
+              </Link>
             </div>
           </AnimatedSection>
         </div>

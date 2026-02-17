@@ -61,6 +61,7 @@ export default function CoursesPage() {
                 <input
                   type="text"
                   placeholder="Search courses..."
+                  aria-label="Search courses"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full rounded-2xl border-0 bg-white/10 px-6 py-4 pl-14 text-white placeholder-slate-400 backdrop-blur-sm ring-1 ring-white/20 transition-all focus:bg-white/15 focus:outline-none focus:ring-2 focus:ring-violet-500"

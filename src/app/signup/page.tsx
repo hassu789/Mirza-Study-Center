@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -27,18 +27,7 @@ export default function SignupPage() {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-
-  // Redirect if already authenticated
-  useEffect(() => {
-    const isAuthenticated = localStorage.getItem('isAuthenticated');
-    const username = localStorage.getItem('username');
-    if (isAuthenticated === 'true' && username) {
-      router.push('/feed');
-    } else {
-      setIsCheckingAuth(false);
-    }
-  }, [router]);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(false);
 
   // Real-time validation handlers
   const handleNameChange = (value: string) => {
@@ -133,11 +122,8 @@ export default function SignupPage() {
       const data = await response.json();
 
       if (data.success) {
-        // Set authentication state consistently
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('username', data.user.name || data.user.email);
-        localStorage.setItem('user', JSON.stringify(data.user));
         router.push('/feed');
+        router.refresh();
       } else {
         setError(data.error || 'Registration failed');
       }

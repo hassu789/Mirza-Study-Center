@@ -311,7 +311,7 @@ export default function InquiryPage() {
                             : 'border-slate-300 focus:border-violet-500 focus:ring-violet-500/20 dark:border-zinc-700'
                         }`}
                         placeholder="98765 43210"
-                        maxLength={12}
+                        maxLength={10}
                       />
                       {errors.phone && touched.phone && (
                         <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.phone}</p>
