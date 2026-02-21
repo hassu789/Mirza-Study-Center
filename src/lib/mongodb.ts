@@ -1,5 +1,5 @@
 import dns from "dns";
-import { MongoClient, MongoClientOptions } from "mongodb";
+import { MongoClient, Db, MongoClientOptions } from "mongodb";
 
 // Always override DNS servers — applies in ALL environments (dev, production, serverless).
 // Root cause of querySrv ECONNREFUSED: the OS/ISP/hotspot DNS either blocks SRV record
@@ -36,6 +36,7 @@ const options: MongoClientOptions = {
 const globalWithMongo = global as typeof globalThis & {
   _mongoClient?: MongoClient;
   _mongoClientPromise?: Promise<MongoClient>;
+  _indexesCreated?: boolean;
 };
 
 function getClientPromise(): Promise<MongoClient> {
@@ -47,11 +48,45 @@ function getClientPromise(): Promise<MongoClient> {
   return globalWithMongo._mongoClientPromise;
 }
 
+// createIndex is idempotent — safe to call on every cold start
+async function ensureIndexes(db: Db) {
+  if (globalWithMongo._indexesCreated) return;
+
+  try {
+    await Promise.all([
+      db.collection("users").createIndex({ email: 1 }, { unique: true }),
+      db.collection("inquiries").createIndex({ createdAt: -1 }),
+      db.collection("inquiries").createIndex({ status: 1 }),
+      db
+        .collection("password_reset_tokens")
+        .createIndex({ token: 1 }, { unique: true }),
+      db
+        .collection("password_reset_tokens")
+        .createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
+      // Enrollment indexes
+      db
+        .collection("enrollments")
+        .createIndex({ userId: 1, courseId: 1 }, { unique: true }),
+      db.collection("enrollments").createIndex({ userId: 1 }),
+      db.collection("enrollments").createIndex({ courseId: 1 }),
+      // Attendance indexes
+      db
+        .collection("attendance")
+        .createIndex({ enrollmentId: 1, date: 1 }, { unique: true }),
+      db.collection("attendance").createIndex({ enrollmentId: 1 }),
+    ]);
+    globalWithMongo._indexesCreated = true;
+  } catch (err) {
+    console.warn("[mongodb] Index creation failed (non-fatal):", err);
+  }
+}
+
 export async function connectToDatabase() {
   try {
     const client = await getClientPromise();
     const dbName = process.env.MONGODB_DB || "mirza-study-centre";
     const db = client.db(dbName);
+    await ensureIndexes(db);
     return { db, client };
   } catch (error) {
     // If connection failed, clear the cached promise so next call retries

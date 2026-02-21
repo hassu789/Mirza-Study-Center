@@ -62,7 +62,26 @@ export const inquirySchema = z.object({
   message: z.string().optional().default(''),
 });
 
+// Enrollment schema
+export const enrollSchema = z.object({
+  courseId: z.string().min(1, 'Course ID is required'),
+});
+
+// Profile update schema
+export const updateProfileSchema = z.object({
+  name: nameField,
+});
+
+// Change password schema
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, 'Current password is required'),
+  newPassword: passwordField,
+});
+
 // Type exports
 export type LoginInput = z.infer<typeof loginSchema>;
 export type SignupInput = z.infer<typeof signupSchema>;
 export type InquiryInput = z.infer<typeof inquirySchema>;
+export type EnrollInput = z.infer<typeof enrollSchema>;
+export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;

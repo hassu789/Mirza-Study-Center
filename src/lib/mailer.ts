@@ -1,0 +1,77 @@
+import nodemailer from 'nodemailer';
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.SMTP_EMAIL,
+    pass: process.env.SMTP_PASSWORD,
+  },
+});
+
+interface InquiryEmailData {
+  name: string;
+  email: string;
+  phone: string;
+  studentClass: string;
+  subject: string;
+  message: string;
+}
+
+export async function sendInquiryNotification(data: InquiryEmailData) {
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.SMTP_EMAIL;
+
+  if (!process.env.SMTP_EMAIL || !process.env.SMTP_PASSWORD) {
+    console.warn('[mailer] SMTP_EMAIL or SMTP_PASSWORD not set — skipping email');
+    return;
+  }
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <div style="background: linear-gradient(135deg, #7c3aed, #9333ea); padding: 24px; border-radius: 12px 12px 0 0;">
+        <h1 style="color: white; margin: 0; font-size: 20px;">New Student Inquiry</h1>
+        <p style="color: #e9d5ff; margin: 4px 0 0;">Mirza Study Centre</p>
+      </div>
+      <div style="border: 1px solid #e2e8f0; border-top: none; padding: 24px; border-radius: 0 0 12px 12px;">
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="padding: 8px 0; color: #64748b; width: 120px;">Name</td>
+            <td style="padding: 8px 0; font-weight: 600;">${data.name}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #64748b;">Email</td>
+            <td style="padding: 8px 0;"><a href="mailto:${data.email}">${data.email}</a></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #64748b;">Phone</td>
+            <td style="padding: 8px 0;"><a href="tel:+91${data.phone}">+91 ${data.phone}</a></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #64748b;">Class</td>
+            <td style="padding: 8px 0;">${data.studentClass}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #64748b;">Subject</td>
+            <td style="padding: 8px 0;">${data.subject}</td>
+          </tr>
+          ${data.message ? `
+          <tr>
+            <td style="padding: 8px 0; color: #64748b; vertical-align: top;">Message</td>
+            <td style="padding: 8px 0;">${data.message}</td>
+          </tr>
+          ` : ''}
+        </table>
+        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 16px 0;" />
+        <p style="color: #94a3b8; font-size: 12px; margin: 0;">
+          Sent from your website's inquiry form. Reply to this student within 24 hours.
+        </p>
+      </div>
+    </div>
+  `;
+
+  await transporter.sendMail({
+    from: `"Mirza Study Centre" <${process.env.SMTP_EMAIL}>`,
+    to: adminEmail,
+    subject: `New Inquiry: ${data.name} — ${data.subject} (${data.studentClass})`,
+    html,
+  });
+}

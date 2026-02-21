@@ -4,6 +4,7 @@ import { inquirySchema } from '@/lib/schemas';
 import { getCurrentUser } from '@/lib/auth';
 import { errorResponse, validationError, handleServerError } from '@/lib/api-utils';
 import { rateLimit, getClientIP } from '@/lib/rate-limit';
+import { sendInquiryNotification } from '@/lib/mailer';
 
 // POST /api/inquiry — Submit new inquiry (public)
 export async function POST(request: Request) {
@@ -36,6 +37,10 @@ export async function POST(request: Request) {
     };
 
     const result = await collection.insertOne(newInquiry);
+
+    // Fire-and-forget: send admin email notification (never blocks the response)
+    sendInquiryNotification({ name, email, phone, studentClass, subject, message })
+      .catch((err) => console.error('[mailer] Failed to send inquiry email:', err));
 
     return NextResponse.json({
       success: true,

@@ -197,19 +197,19 @@ export default function InquiryPage() {
                 ))}
               </div>
 
-              {/* Map placeholder with image */}
-              <div className="relative h-48 overflow-hidden rounded-2xl sm:h-64">
-                <Image
-                  src={images.features.success}
-                  alt="Students"
-                  fill
-                  className="object-cover"
+              {/* Google Maps Embed */}
+              <div className="overflow-hidden rounded-2xl">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3571.5!2d83.185!3d26.0685!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sShibli+Inter+College+Pandey+Bazar+Azamgarh!5e0!3m2!1sen!2sin!4v1700000000000"
+                  width="100%"
+                  height="256"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Mirza Study Centre Location"
+                  className="h-48 w-full sm:h-64"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                <div className="absolute bottom-3 left-3 right-3 text-center sm:bottom-4 sm:left-4 sm:right-4">
-                  <p className="text-base font-semibold text-white sm:text-lg">Visit Our Centre</p>
-                  <p className="text-xs text-white/80 sm:text-sm">Beside Shibli Inter College, Pandey Bazar, Azamgarh</p>
-                </div>
               </div>
             </AnimatedSection>
 

@@ -1,8 +1,9 @@
 'use client';
 
-import { use } from 'react';
+import { use, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
@@ -11,7 +12,59 @@ import { courseImages, teacherImages, images } from '@/data/images';
 
 export default function CourseDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
+  const router = useRouter();
   const course = courses.find((c) => c.id === resolvedParams.id);
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [enrolling, setEnrolling] = useState(false);
+  const [enrollMsg, setEnrollMsg] = useState('');
+
+  useEffect(() => {
+    fetch('/api/auth/session')
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.authenticated) {
+          setIsLoggedIn(true);
+          // Check if already enrolled
+          fetch('/api/enroll')
+            .then((r) => r.json())
+            .then((data) => {
+              if (data.enrollments?.some((e: { courseId: string }) => e.courseId === resolvedParams.id)) {
+                setIsEnrolled(true);
+              }
+            });
+        }
+      })
+      .catch(() => {});
+  }, [resolvedParams.id]);
+
+  const handleEnroll = async () => {
+    if (!isLoggedIn) {
+      router.push('/login');
+      return;
+    }
+    setEnrolling(true);
+    setEnrollMsg('');
+    try {
+      const res = await fetch('/api/enroll', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ courseId: resolvedParams.id }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setIsEnrolled(true);
+        setEnrollMsg(data.message);
+      } else {
+        setEnrollMsg(data.error || 'Failed to enroll');
+      }
+    } catch {
+      setEnrollMsg('Something went wrong. Please try again.');
+    } finally {
+      setEnrolling(false);
+    }
+  };
   const instructor = course ? instructors.find((i) => i.id === course.instructorId) : null;
 
   if (!course) {
@@ -259,15 +312,36 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
                       )}
                     </div>
 
-                    <Link
-                      href="/inquiry"
-                      className="mb-3 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-500/30 transition-all hover:shadow-xl hover:shadow-violet-500/40 sm:mb-4 sm:py-4 sm:text-base"
-                    >
-                      Enroll Now
-                      <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </Link>
+                    {isEnrolled ? (
+                      <Link
+                        href="/feed"
+                        className="mb-3 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 sm:mb-4 sm:py-4 sm:text-base"
+                      >
+                        <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        Enrolled — Go to Dashboard
+                      </Link>
+                    ) : (
+                      <button
+                        onClick={handleEnroll}
+                        disabled={enrolling}
+                        className="mb-3 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-500/30 transition-all hover:shadow-xl hover:shadow-violet-500/40 disabled:opacity-50 sm:mb-4 sm:py-4 sm:text-base"
+                      >
+                        {enrolling ? 'Enrolling...' : (isLoggedIn ? 'Enroll Now' : 'Login to Enroll')}
+                        {!enrolling && (
+                          <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                          </svg>
+                        )}
+                      </button>
+                    )}
+
+                    {enrollMsg && (
+                      <p className={`mb-3 text-center text-sm ${isEnrolled ? 'text-emerald-600' : 'text-red-600'}`}>
+                        {enrollMsg}
+                      </p>
+                    )}
 
                     <Link
                       href="/inquiry"
