@@ -1,16 +1,13 @@
 import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
-<<<<<<< HEAD
-import "./globals.css";
 
-=======
-import WhatsAppButton from "@/components/WhatsAppButton";
 import "./globals.css";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mirzastudycentre.com";
 
->>>>>>> fffd24c (admin account)
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
