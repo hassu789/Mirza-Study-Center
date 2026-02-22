@@ -1,7 +1,7 @@
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: "gmail",
   auth: {
     user: process.env.SMTP_EMAIL,
     pass: process.env.SMTP_PASSWORD,
@@ -21,7 +21,9 @@ export async function sendInquiryNotification(data: InquiryEmailData) {
   const adminEmail = process.env.ADMIN_EMAIL || process.env.SMTP_EMAIL;
 
   if (!process.env.SMTP_EMAIL || !process.env.SMTP_PASSWORD) {
-    console.warn('[mailer] SMTP_EMAIL or SMTP_PASSWORD not set — skipping email');
+    console.warn(
+      "[mailer] SMTP_EMAIL or SMTP_PASSWORD not set — skipping email",
+    );
     return;
   }
 
@@ -53,12 +55,16 @@ export async function sendInquiryNotification(data: InquiryEmailData) {
             <td style="padding: 8px 0; color: #64748b;">Subject</td>
             <td style="padding: 8px 0;">${data.subject}</td>
           </tr>
-          ${data.message ? `
+          ${
+            data.message
+              ? `
           <tr>
             <td style="padding: 8px 0; color: #64748b; vertical-align: top;">Message</td>
             <td style="padding: 8px 0;">${data.message}</td>
           </tr>
-          ` : ''}
+          `
+              : ""
+          }
         </table>
         <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 16px 0;" />
         <p style="color: #94a3b8; font-size: 12px; margin: 0;">
@@ -74,4 +80,30 @@ export async function sendInquiryNotification(data: InquiryEmailData) {
     subject: `New Inquiry: ${data.name} — ${data.subject} (${data.studentClass})`,
     html,
   });
+}
+
+export async function sendEmail({
+  to,
+  subject,
+  html,
+}: {
+  to: string;
+  subject: string;
+  html: string;
+}) {
+  if (!process.env.SMTP_EMAIL || !process.env.SMTP_PASSWORD) {
+    console.warn(
+      "[mailer] SMTP_EMAIL or SMTP_PASSWORD not set — skipping email",
+    );
+    throw new Error("SMTP credentials not configured");
+  }
+
+  const info = await transporter.sendMail({
+    from: `"Mirza Study Centre" <${process.env.SMTP_EMAIL}>`,
+    to,
+    subject,
+    html,
+  });
+
+  return { messageId: info.messageId };
 }
