@@ -18,7 +18,18 @@ interface InquiryEmailData {
 }
 
 export async function sendInquiryNotification(data: InquiryEmailData) {
-  const adminEmail = process.env.ADMIN_EMAIL || process.env.SMTP_EMAIL;
+  const adminEmail = process.env.ADMIN_EMAIL;
+  if (!adminEmail) {
+    console.warn("[mailer] ADMIN_EMAIL not set — skipping admin notification");
+    return;
+  }
+  console.log("[mailer] ADMIN_EMAIL:", process.env.ADMIN_EMAIL);
+  console.log("[mailer] SMTP_EMAIL:", process.env.SMTP_EMAIL);
+  console.log(
+    "[mailer] SMTP_PASSWORD:",
+    process.env.SMTP_PASSWORD ? "✓ Set" : "✗ Missing",
+  );
+  console.log("[mailer] Sending admin notification to:", adminEmail);
 
   if (!process.env.SMTP_EMAIL || !process.env.SMTP_PASSWORD) {
     console.warn(
@@ -80,6 +91,7 @@ export async function sendInquiryNotification(data: InquiryEmailData) {
     subject: `New Inquiry: ${data.name} — ${data.subject} (${data.studentClass})`,
     html,
   });
+  console.log("[mailer] Email sent to:", adminEmail);
 }
 
 export async function sendEmail({
