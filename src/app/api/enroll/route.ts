@@ -79,25 +79,24 @@ export async function GET() {
       .sort({ enrolledAt: -1 })
       .toArray();
 
-    // Get attendance summaries for all enrollments
+    let attMap = new Map<string, { total: number; present: number }>();
     const enrollmentIds = enrollments.map((e) => e._id);
-    const attAgg = await db
-      .collection('attendance')
-      .aggregate([
-        { $match: { enrollmentId: { $in: enrollmentIds } } },
-        {
-          $group: {
-            _id: '$enrollmentId',
-            total: { $sum: 1 },
-            present: { $sum: { $cond: [{ $eq: ['$status', 'present'] }, 1, 0] } },
+    if (enrollmentIds.length > 0) {
+      const attAgg = await db
+        .collection('attendance')
+        .aggregate([
+          { $match: { enrollmentId: { $in: enrollmentIds } } },
+          {
+            $group: {
+              _id: '$enrollmentId',
+              total: { $sum: 1 },
+              present: { $sum: { $cond: [{ $eq: ['$status', 'present'] }, 1, 0] } },
+            },
           },
-        },
-      ])
-      .toArray();
-
-    const attMap = new Map(
-      attAgg.map((a) => [a._id.toString(), { total: a.total, present: a.present }])
-    );
+        ])
+        .toArray();
+      attMap = new Map(attAgg.map((a) => [a._id.toString(), { total: a.total, present: a.present }]));
+    }
 
     const enriched = enrollments.map((e) => {
       const course = courses.find((c) => c.id === e.courseId);

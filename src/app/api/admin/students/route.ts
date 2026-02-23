@@ -18,44 +18,53 @@ export async function GET(request: Request) {
 
     const { db } = await connectToDatabase();
 
-    const query: Record<string, unknown> = {};
+    const matchStage: Record<string, unknown> = {};
     if (search) {
-      query.$or = [
+      matchStage.$or = [
         { name: { $regex: search, $options: 'i' } },
         { email: { $regex: search, $options: 'i' } },
       ];
     }
 
-    const [students, total] = await Promise.all([
+    const [aggResult, total] = await Promise.all([
       db
         .collection('users')
-        .find(query, { projection: { password: 0 } })
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
+        .aggregate([
+          { $match: Object.keys(matchStage).length ? matchStage : {} },
+          { $sort: { createdAt: -1 } },
+          { $skip: skip },
+          { $limit: limit },
+          { $project: { password: 0 } },
+          {
+            $lookup: {
+              from: 'enrollments',
+              localField: '_id',
+              foreignField: 'userId',
+              as: 'enrollments',
+            },
+          },
+          {
+            $project: {
+              id: { $toString: '$_id' },
+              name: 1,
+              email: 1,
+              role: 1,
+              createdAt: 1,
+              enrollmentCount: { $size: '$enrollments' },
+            },
+          },
+        ])
         .toArray(),
-      db.collection('users').countDocuments(query),
+      db.collection('users').countDocuments(Object.keys(matchStage).length ? matchStage : {}),
     ]);
 
-    // Get enrollment counts for each student
-    const studentIds = students.map((s) => s._id);
-    const enrollmentCounts = await db
-      .collection('enrollments')
-      .aggregate([
-        { $match: { userId: { $in: studentIds } } },
-        { $group: { _id: '$userId', count: { $sum: 1 } } },
-      ])
-      .toArray();
-
-    const countMap = new Map(enrollmentCounts.map((e) => [e._id.toString(), e.count]));
-
-    const enriched = students.map((s) => ({
-      id: s._id.toString(),
+    const enriched = aggResult.map((s: { id?: string; name: string; email: string; role?: string; createdAt?: Date; enrollmentCount?: number }) => ({
+      id: s.id || '',
       name: s.name,
       email: s.email,
       role: s.role || 'user',
       createdAt: s.createdAt,
-      enrollmentCount: countMap.get(s._id.toString()) || 0,
+      enrollmentCount: s.enrollmentCount ?? 0,
     }));
 
     return NextResponse.json({

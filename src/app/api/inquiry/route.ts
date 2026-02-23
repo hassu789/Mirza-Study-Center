@@ -74,6 +74,7 @@ export async function GET() {
     const inquiries = await collection
       .find({})
       .sort({ createdAt: -1 })
+      .limit(500)
       .toArray();
 
     return NextResponse.json({

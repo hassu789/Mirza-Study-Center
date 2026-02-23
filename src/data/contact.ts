@@ -35,4 +35,9 @@ export const contact = {
     youtube: '',
     linkedin: '',
   },
+  /** Local paths to social logos (in public folder) */
+  socialLogos: {
+    facebook: '/images/social/facebook.svg',
+    instagram: '/images/social/instagram.svg',
+  },
 };

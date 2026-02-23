@@ -119,11 +119,31 @@ export default function AdminPage() {
     if (data.success) setEnrollments(data.enrollments);
   }, [router]);
 
+  // Lazy-load tab data: only fetch when tab becomes active
+  const [fetchedTabs, setFetchedTabs] = useState<Set<Tab>>(new Set());
+
   useEffect(() => {
-    Promise.all([fetchInquiries(), fetchStudents(), fetchEnrollments()])
+    setFetchedTabs((prev) => {
+      const next = new Set(prev);
+      if (!next.has(activeTab)) next.add(activeTab);
+      return next;
+    });
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (fetchedTabs.size === 0) return;
+    const tasks: Promise<void>[] = [];
+    if (fetchedTabs.has('inquiries')) tasks.push(fetchInquiries());
+    if (fetchedTabs.has('students')) tasks.push(fetchStudents(1, studentSearch));
+    if (fetchedTabs.has('enrollments') || fetchedTabs.has('attendance')) tasks.push(fetchEnrollments());
+    if (tasks.length === 0) {
+      setIsLoading(false);
+      return;
+    }
+    Promise.all(tasks)
       .catch(() => setError('Failed to load data.'))
       .finally(() => setIsLoading(false));
-  }, [fetchInquiries, fetchStudents, fetchEnrollments]);
+  }, [fetchedTabs, fetchInquiries, fetchStudents, fetchEnrollments, studentSearch]);
 
   // ─── Actions ────────────────────────────────────
   const updateInquiryStatus = async (id: string, newStatus: string) => {

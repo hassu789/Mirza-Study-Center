@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { contact } from '@/data/contact';
 import { useToast } from '@/components/Toast';
 
@@ -59,11 +60,11 @@ export default function Footer() {
               Empowering students with quality education. Your trusted partner for academic excellence in Azamgarh.
             </p>
             
-            {/* Social Links - add URLs in src/data/contact.ts when available */}
+            {/* Social Links - use official logos from public/images/social/ */}
             <div className="flex items-center gap-2 sm:gap-3">
               {contact.social.facebook && (
-                <a href={contact.social.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-base transition-all hover:bg-white/10 hover:scale-110 sm:h-10 sm:w-10 sm:text-lg">
-                  📘
+                <a href={contact.social.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-white transition-all hover:bg-white/10 hover:scale-110 sm:h-10 sm:w-10">
+                  <Image src={contact.socialLogos.facebook} alt="" width={24} height={24} className="h-5 w-5 sm:h-6 sm:w-6" />
                 </a>
               )}
               {contact.social.twitter && (
@@ -72,8 +73,8 @@ export default function Footer() {
                 </a>
               )}
               {contact.social.instagram && (
-                <a href={contact.social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-base transition-all hover:bg-white/10 hover:scale-110 sm:h-10 sm:w-10 sm:text-lg">
-                  📷
+                <a href={contact.social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-white transition-all hover:bg-white/10 hover:scale-110 sm:h-10 sm:w-10">
+                  <Image src={contact.socialLogos.instagram} alt="" width={24} height={24} className="h-5 w-5 sm:h-6 sm:w-6" />
                 </a>
               )}
               {contact.social.linkedin && (

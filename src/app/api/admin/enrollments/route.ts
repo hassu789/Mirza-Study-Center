@@ -18,36 +18,36 @@ export async function GET(request: Request) {
 
     const { db } = await connectToDatabase();
 
-    const query: Record<string, unknown> = {};
-    if (courseId) query.courseId = courseId;
-    if (status) query.status = status;
+    const matchStage: Record<string, unknown> = {};
+    if (courseId) matchStage.courseId = courseId;
+    if (status) matchStage.status = status;
 
-    const enrollments = await db
+    const raw = await db
       .collection('enrollments')
-      .find(query)
-      .sort({ enrolledAt: -1 })
+      .aggregate([
+        { $match: Object.keys(matchStage).length ? matchStage : {} },
+        { $sort: { enrolledAt: -1 } },
+        { $limit: 1000 },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'userId',
+            foreignField: '_id',
+            as: 'user',
+            pipeline: [{ $project: { name: 1, email: 1 } }],
+          },
+        },
+        { $unwind: { path: '$user', preserveNullAndEmptyArrays: true } },
+      ])
       .toArray();
 
-    // Get all unique userIds and fetch user names
-    const userIds = [...new Set(enrollments.map((e) => e.userId.toString()))];
-    const users = await db
-      .collection('users')
-      .find(
-        { _id: { $in: userIds.map((id) => new ObjectId(id)) } },
-        { projection: { name: 1, email: 1 } }
-      )
-      .toArray();
-
-    const userMap = new Map(users.map((u) => [u._id.toString(), u]));
-
-    const enriched = enrollments.map((e) => {
-      const u = userMap.get(e.userId.toString());
+    const enriched = raw.map((e: { _id: { toString: () => string }; userId: { toString: () => string }; courseId: string; enrolledAt: Date; progress: number; status: string; paymentStatus: string; user?: { name?: string; email?: string } }) => {
       const course = courses.find((c) => c.id === e.courseId);
       return {
         _id: e._id.toString(),
         userId: e.userId.toString(),
-        studentName: u?.name || 'Unknown',
-        studentEmail: u?.email || '',
+        studentName: e.user?.name || 'Unknown',
+        studentEmail: e.user?.email || '',
         courseId: e.courseId,
         courseTitle: course?.title || 'Unknown',
         courseCategory: course?.category || '',
