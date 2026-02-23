@@ -80,10 +80,10 @@ export const images = {
     individual2: '/images/students/individual2.jpg',
   },
 
-  // Patterns and decorative (SVG for lightweight, scalable)
+  // Patterns and decorative
   patterns: {
-    gradient1: '/images/patterns/gradient1.svg',
-    abstract: '/images/patterns/abstract.svg',
+    gradient1: '/images/patterns/gradient1.jpg',
+    abstract: '/images/patterns/abstract.jpg',
   }
 };
 
