@@ -6,6 +6,7 @@
     "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start",
+    "download-images": "bash scripts/download-images.sh",
     "lint": "eslint"
   },
   "dependencies": {
@@ -26,8 +27,8 @@
     "@types/nodemailer": "^7.0.11",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.1.6",
+    "eslint": "^10.0.1",
+    "eslint-config-next": "^0.2.4",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

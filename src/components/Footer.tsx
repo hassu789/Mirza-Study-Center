@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { contact } from '@/data/contact';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
@@ -60,6 +61,7 @@ export default function Footer() {
                 { href: '/', label: 'Home' },
                 { href: '/courses', label: 'Courses' },
                 { href: '/about', label: 'About Us' },
+                { href: '/testimonials', label: 'Testimonials' },
                 { href: '/inquiry', label: 'Enquiry' },
                 { href: '/faq', label: 'FAQ' },
               ].map((link) => (
@@ -103,22 +105,33 @@ export default function Footer() {
             </h3>
             <div className="mb-4 space-y-2 text-sm text-slate-400 sm:mb-6 sm:space-y-3">
               <p className="flex items-start gap-2">
-                <span className="flex-shrink-0">📍</span> <span>Beside Shibli Inter College, Pandey Bazar, Azamgarh</span>
+                <span className="flex-shrink-0">📍</span>{' '}
+                <span>
+                  {contact.address}{' '}
+                  <a
+                    href={contact.mapDirectionsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-violet-400 hover:text-violet-300 underline"
+                  >
+                    View on Map
+                  </a>
+                </span>
               </p>
               <p className="flex items-center gap-2">
-                <span>📞</span> +91 96702 12323
+                <span>📞</span> {contact.phonesDisplay[0]}
               </p>
               <p className="flex items-center gap-2">
-                <span>📞</span> +91 89572 05460
+                <span>📞</span> {contact.phonesDisplay[1]}
               </p>
               <p className="flex items-center gap-2">
-                <span>📞</span> +91 93358 69519
+                <span>📞</span> {contact.phonesDisplay[2]}
               </p>
               <p className="flex items-center gap-2">
-                <span>✉️</span> <span className="break-all">info@mirzastudycentre.com</span>
+                <span>✉️</span> <span className="break-all">{contact.email}</span>
               </p>
               <p className="flex items-center gap-2">
-                <span>⏰</span> Mon-Sat: 9AM - 8PM
+                <span>⏰</span> {contact.hours}
               </p>
             </div>
 
@@ -157,9 +170,9 @@ export default function Footer() {
             © {new Date().getFullYear()} Mirza Study Centre. All rights reserved.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-slate-500 sm:gap-4 sm:text-sm">
-            <a href="#" className="transition-colors hover:text-white">Privacy Policy</a>
+            <Link href="/privacy" className="transition-colors hover:text-white">Privacy Policy</Link>
             <span>•</span>
-            <a href="#" className="transition-colors hover:text-white">Terms of Service</a>
+            <Link href="/terms" className="transition-colors hover:text-white">Terms of Service</Link>
             <span className="hidden sm:inline">•</span>
             <span className="hidden sm:inline">Made with ❤️ for students</span>
           </div>

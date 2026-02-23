@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
 import { images } from '@/data/images';
+import { contact } from '@/data/contact';
 import { validateName, validateEmail, validatePhone } from '@/utils/validation';
 
 interface FormData {
@@ -128,11 +129,11 @@ export default function InquiryPage() {
   };
 
   const contactInfo = [
-    { icon: '📍', title: 'Address', value: 'Beside Shibli Inter College, Pandey Bazar, Azamgarh' },
-    { icon: '📞', title: 'Phone', value: '+91 96702 12323 / +91 89572 05460' },
-    { icon: '📞', title: 'Phone', value: '+91 93358 69519' },
-    { icon: '✉️', title: 'Email', value: 'info@mirzastudycentre.com' },
-    { icon: '⏰', title: 'Hours', value: 'Mon-Sat: 9AM - 8PM' },
+    { icon: '📍', title: 'Address', value: contact.address },
+    { icon: '📞', title: 'Phone', value: `${contact.phonesDisplay[0]} / ${contact.phonesDisplay[1]}` },
+    { icon: '📞', title: 'Phone', value: contact.phonesDisplay[2] },
+    { icon: '✉️', title: 'Email', value: contact.email },
+    { icon: '⏰', title: 'Hours', value: contact.hours },
   ];
 
   return (
@@ -198,18 +199,28 @@ export default function InquiryPage() {
               </div>
 
               {/* Google Maps Embed */}
-              <div className="overflow-hidden rounded-2xl">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3571.5!2d83.185!3d26.0685!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sShibli+Inter+College+Pandey+Bazar+Azamgarh!5e0!3m2!1sen!2sin!4v1700000000000"
-                  width="100%"
-                  height="256"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="Mirza Study Centre Location"
-                  className="h-48 w-full sm:h-64"
-                />
+              <div className="space-y-2">
+                <div className="overflow-hidden rounded-2xl">
+                  <iframe
+                    src={contact.mapEmbedUrl}
+                    width="100%"
+                    height="256"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Mirza Study Centre Location"
+                    className="h-48 w-full sm:h-64"
+                  />
+                </div>
+                <a
+                  href={contact.mapDirectionsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-violet-600 hover:text-violet-500 dark:text-violet-400 dark:hover:text-violet-300"
+                >
+                  View on Google Maps →
+                </a>
               </div>
             </AnimatedSection>
 

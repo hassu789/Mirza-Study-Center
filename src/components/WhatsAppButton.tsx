@@ -1,38 +1,55 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-
-const PHONE = '919670212323';
-const MESSAGE = encodeURIComponent(
-  'Hi! I am interested in coaching at Mirza Study Centre. Please share details.'
-);
+import { contact } from '@/data/contact';
 
 export default function WhatsAppButton() {
   const [visible, setVisible] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
-    // Show button after a short delay so it doesn't flash during SSR hydration
-    const timer = setTimeout(() => setVisible(true), 1500);
+    const timer = setTimeout(() => setVisible(true), 400);
     return () => clearTimeout(timer);
   }, []);
 
   if (!visible) return null;
 
+  const waUrl = `https://wa.me/${contact.whatsappPhone}?text=${encodeURIComponent(contact.whatsappMessage)}`;
+
   return (
-    <a
-      href={`https://wa.me/${PHONE}?text=${MESSAGE}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="Chat on WhatsApp"
-      className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-green-500/30 transition-all hover:scale-110 hover:shadow-xl hover:shadow-green-500/40 sm:h-16 sm:w-16"
-    >
-      <svg
-        viewBox="0 0 32 32"
-        fill="currentColor"
-        className="h-7 w-7 sm:h-8 sm:w-8"
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-1 sm:bottom-8 sm:right-8">
+      {/* Tooltip */}
+      {showTooltip && (
+        <div
+          className="rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white shadow-xl dark:bg-zinc-800"
+          role="tooltip"
+        >
+          <span className="relative">Chat on WhatsApp</span>
+        </div>
+      )}
+
+      {/* Button */}
+      <a
+        href={waUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chat on WhatsApp"
+        onMouseEnter={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+        onFocus={() => setShowTooltip(true)}
+        onBlur={() => setShowTooltip(false)}
+        className="group flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-[#25D366]/40 ring-2 ring-white/20 transition-all duration-200 hover:scale-110 hover:shadow-xl hover:shadow-[#25D366]/50 focus:outline-none focus:ring-2 focus:ring-[#25D366] focus:ring-offset-2 dark:ring-white/10 sm:h-16 sm:w-16"
       >
-        <path d="M16.004 0h-.008C7.174 0 0 7.176 0 16c0 3.5 1.128 6.744 3.046 9.378L1.054 31.29l6.118-1.958A15.89 15.89 0 0016.004 32C24.826 32 32 24.822 32 16S24.826 0 16.004 0zm9.31 22.606c-.39 1.1-1.932 2.014-3.164 2.28-.844.18-1.946.322-5.656-1.216-4.748-1.966-7.804-6.794-8.038-7.108-.226-.314-1.886-2.512-1.886-4.792s1.194-3.4 1.618-3.866c.424-.466.924-.582 1.232-.582.308 0 .616.002.886.016.284.014.666-.108.942.718.39 1.1.892 2.678.97 2.872.078.194.13.42.026.674-.104.254-.156.412-.312.636-.156.224-.328.5-.468.672-.156.188-.318.392-.137.77.182.376.808 1.332 1.734 2.158 1.192 1.062 2.196 1.392 2.508 1.546.312.156.494.13.676-.078.182-.208.778-.908 .986-1.22.208-.312.416-.26.7-.156.284.104 1.8.85 2.108 1.004.312.156.518.232.596.36.078.128.078.746-.312 1.466z" />
-      </svg>
-    </a>
+        {/* Official WhatsApp Logo SVG (24x24) */}
+        <svg
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className="h-7 w-7 sm:h-8 sm:w-8"
+          aria-hidden
+        >
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.865 9.865 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+        </svg>
+      </a>
+    </div>
   );
 }

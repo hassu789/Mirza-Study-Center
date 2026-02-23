@@ -19,12 +19,11 @@ Without this, Vercel's servers cannot connect to your MongoDB cluster.
 ### 2. Verify MONGODB_URI in Vercel
 
 1. Go to Vercel → your project → **Settings** → **Environment Variables**
-2. Ensure `MONGODB_URI` exists with value:
-   ```
-   mongodb+srv://hassu8960:Khan7890@cluster0.1pvftwg.mongodb.net/?appName=Cluster0
-   ```
+2. Ensure `MONGODB_URI` exists with your MongoDB Atlas connection string
 3. It must be enabled for **Production** (and Preview)
 4. After adding/editing, **Redeploy** the project
+
+> See `.env.example` for the full list of required environment variables.
 
 ---
 

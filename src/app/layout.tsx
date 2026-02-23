@@ -4,6 +4,7 @@ import { GeistMono } from "geist/font/mono";
 
 import "./globals.css";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import { contact } from "@/data/contact";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mirzastudycentre.com";
 
@@ -15,14 +16,14 @@ export const metadata: Metadata = {
     template: "%s | Mirza Study Centre",
   },
   description:
-    "Mirza Study Centre offers expert coaching for Class 6-12 & BSc in Physics, Chemistry, Biology, Mathematics, English & Commerce. Located beside Shibli Inter College, Pandey Bazar, Azamgarh.",
+    "Mirza Study Centre offers expert coaching for Class 6-12 & BSc in Physics, Chemistry, Biology, Mathematics, English & Commerce. Located in Arazibag, Azamgarh.",
   icons: {
     icon: "/icon.svg",
   },
   openGraph: {
     title: "Mirza Study Centre - Best Coaching in Azamgarh",
     description:
-      "Expert coaching for Class 6-12 & BSc in Physics, Chemistry, Biology, Mathematics, English & Commerce. Beside Shibli Inter College, Pandey Bazar, Azamgarh.",
+      "Expert coaching for Class 6-12 & BSc in Physics, Chemistry, Biology, Mathematics, English & Commerce. Arazibag, Azamgarh.",
     type: "website",
     locale: "en_IN",
     siteName: "Mirza Study Centre",
@@ -43,11 +44,11 @@ const jsonLd = {
   description:
     "Expert coaching for Class 6-12 & BSc in Physics, Chemistry, Biology, Mathematics, English & Commerce.",
   url: siteUrl,
-  telephone: ["+919670212323", "+918957205460", "+919335869519"],
-  email: "info@mirzastudycentre.com",
+  telephone: contact.phones,
+  email: contact.email,
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Beside Shibli Inter College, Pandey Bazar",
+    streetAddress: "35GJ+3V3, Arazibag",
     addressLocality: "Azamgarh",
     addressRegion: "Uttar Pradesh",
     postalCode: "276001",
@@ -55,8 +56,8 @@ const jsonLd = {
   },
   geo: {
     "@type": "GeoCoordinates",
-    latitude: 26.0685,
-    longitude: 83.185,
+    latitude: contact.coordinates.lat,
+    longitude: contact.coordinates.lng,
   },
   openingHoursSpecification: {
     "@type": "OpeningHoursSpecification",
