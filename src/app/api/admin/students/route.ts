@@ -58,7 +58,8 @@ export async function GET(request: Request) {
       db.collection('users').countDocuments(Object.keys(matchStage).length ? matchStage : {}),
     ]);
 
-    const enriched = aggResult.map((s: { id?: string; name: string; email: string; role?: string; createdAt?: Date; enrollmentCount?: number }) => ({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const enriched = aggResult.map((s: any) => ({
       id: s.id || '',
       name: s.name,
       email: s.email,

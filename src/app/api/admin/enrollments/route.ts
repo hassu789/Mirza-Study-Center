@@ -41,7 +41,8 @@ export async function GET(request: Request) {
       ])
       .toArray();
 
-    const enriched = raw.map((e: { _id: { toString: () => string }; userId: { toString: () => string }; courseId: string; enrolledAt: Date; progress: number; status: string; paymentStatus: string; user?: { name?: string; email?: string } }) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const enriched = raw.map((e: any) => {
       const course = courses.find((c) => c.id === e.courseId);
       return {
         _id: e._id.toString(),
