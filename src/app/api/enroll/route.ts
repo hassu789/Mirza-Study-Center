@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb';
 import { connectToDatabase } from '@/lib/mongodb';
 import { enrollSchema } from '@/lib/schemas';
 import { getCurrentUser } from '@/lib/auth';
+import { sendEnrollmentConfirmation } from '@/lib/mailer';
 import { errorResponse, validationError, handleServerError } from '@/lib/api-utils';
 import { courses } from '@/data/courses';
 
@@ -45,6 +46,14 @@ export async function POST(request: Request) {
       status: 'active',
       paymentStatus: 'pending',
     });
+
+    sendEnrollmentConfirmation({
+      studentName: user.name,
+      studentEmail: user.email,
+      courseTitle: course.title,
+      courseSchedule: course.schedule,
+      courseInstructor: course.instructor,
+    }).catch((err) => console.error('[mailer] Enrollment email failed:', err));
 
     return NextResponse.json({
       success: true,

@@ -27,10 +27,10 @@ export const contact = {
   /** WhatsApp: phone without + for wa.me links */
   whatsappPhone: '919670212323',
   whatsappMessage: 'Hi! I am interested in coaching at Mirza Study Centre. Please share details.',
-  /** Social media URLs - add when available */
+  /** Social media URLs */
   social: {
-    facebook: '',
-    instagram: '',
+    facebook: 'https://www.facebook.com/share/1EsxrooN5J/',
+    instagram: 'https://www.instagram.com/mscentre_2020/',
     twitter: '',
     youtube: '',
     linkedin: '',

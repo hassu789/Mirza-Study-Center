@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/Header';
+import { useToast } from '@/components/Toast';
 import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
 
@@ -22,6 +23,7 @@ interface ProfileStats {
 
 export default function ProfilePage() {
   const router = useRouter();
+  const { showToast } = useToast();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [stats, setStats] = useState<ProfileStats>({ enrollmentCount: 0, inquiryCount: 0 });
   const [isLoading, setIsLoading] = useState(true);
@@ -71,6 +73,7 @@ export default function ProfilePage() {
         setProfile((p) => p ? { ...p, name: newName } : p);
         setEditingName(false);
         setNameMsg('Name updated!');
+        showToast('Name updated successfully!', 'success');
         setTimeout(() => setNameMsg(''), 3000);
       } else {
         setNameMsg(data.error || 'Failed to update');
@@ -95,6 +98,7 @@ export default function ProfilePage() {
       const data = await res.json();
       if (data.success) {
         setPwMsg('Password changed successfully!');
+        showToast('Password changed successfully!', 'success');
         setCurrentPassword('');
         setNewPassword('');
         setShowPasswordForm(false);

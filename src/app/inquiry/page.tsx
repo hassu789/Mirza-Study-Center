@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
 import { images } from '@/data/images';
 import { contact } from '@/data/contact';
+import { useToast } from '@/components/Toast';
 import { validateName, validateEmail, validatePhone } from '@/utils/validation';
 
 interface FormData {
@@ -27,6 +28,7 @@ interface FieldErrors {
 }
 
 export default function InquiryPage() {
+  const { showToast } = useToast();
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
@@ -115,14 +117,17 @@ export default function InquiryPage() {
 
       if (response.ok) {
         setSubmitStatus('success');
+        showToast('Inquiry submitted! We\'ll contact you soon.', 'success');
         setFormData({ name: '', email: '', phone: '', studentClass: '', subject: '', message: '' });
         setErrors({});
         setTouched({});
       } else {
         setSubmitStatus('error');
+        showToast('Something went wrong. Please try again.', 'error');
       }
     } catch {
       setSubmitStatus('error');
+      showToast('Something went wrong. Please try again.', 'error');
     } finally {
       setIsSubmitting(false);
     }

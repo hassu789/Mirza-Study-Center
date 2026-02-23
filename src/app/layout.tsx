@@ -4,6 +4,7 @@ import { GeistMono } from "geist/font/mono";
 
 import "./globals.css";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import { ToastProvider } from "@/components/Toast";
 import { contact } from "@/data/contact";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mirzastudycentre.com";
@@ -85,8 +86,10 @@ export default function RootLayout({
       <body
         className={`${GeistSans.variable} ${GeistMono.variable} antialiased`}
       >
-        {children}
-        <WhatsAppButton />
+        <ToastProvider>
+          {children}
+          <WhatsAppButton />
+        </ToastProvider>
       </body>
     </html>
   );

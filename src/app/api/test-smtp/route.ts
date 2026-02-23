@@ -1,7 +1,14 @@
 import { sendEmail } from "@/lib/mailer";
 import { NextResponse } from "next/server";
+import { getCurrentUser } from "@/lib/auth";
 
+// GET /api/test-smtp — Test SMTP (admin only, for debugging)
 export async function GET() {
+  const user = await getCurrentUser();
+  if (!user || user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+
   try {
     console.log("[DEBUG] SMTP_EMAIL:", process.env.SMTP_EMAIL);
     console.log(

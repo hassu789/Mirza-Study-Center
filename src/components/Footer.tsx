@@ -3,16 +3,38 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { contact } from '@/data/contact';
+import { useToast } from '@/components/Toast';
 
 export default function Footer() {
+  const { showToast } = useToast();
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubscribed(true);
-    setEmail('');
-    setTimeout(() => setIsSubscribed(false), 3000);
+    if (!email.trim() || isLoading) return;
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setIsSubscribed(true);
+        setEmail('');
+        showToast(data.message || 'Thank you for subscribing!', 'success');
+        setTimeout(() => setIsSubscribed(false), 3000);
+      } else {
+        showToast(data.error || 'Something went wrong.', 'error');
+      }
+    } catch {
+      showToast('Something went wrong. Please try again.', 'error');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -37,17 +59,33 @@ export default function Footer() {
               Empowering students with quality education. Your trusted partner for academic excellence in Azamgarh.
             </p>
             
-            {/* Social Links */}
+            {/* Social Links - add URLs in src/data/contact.ts when available */}
             <div className="flex items-center gap-2 sm:gap-3">
-              {['📘', '🐦', '📷', '💼', '📺'].map((icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-base transition-all hover:bg-white/10 hover:scale-110 sm:h-10 sm:w-10 sm:text-lg"
-                >
-                  {icon}
+              {contact.social.facebook && (
+                <a href={contact.social.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-base transition-all hover:bg-white/10 hover:scale-110 sm:h-10 sm:w-10 sm:text-lg">
+                  📘
                 </a>
-              ))}
+              )}
+              {contact.social.twitter && (
+                <a href={contact.social.twitter} target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-base transition-all hover:bg-white/10 hover:scale-110 sm:h-10 sm:w-10 sm:text-lg">
+                  🐦
+                </a>
+              )}
+              {contact.social.instagram && (
+                <a href={contact.social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-base transition-all hover:bg-white/10 hover:scale-110 sm:h-10 sm:w-10 sm:text-lg">
+                  📷
+                </a>
+              )}
+              {contact.social.linkedin && (
+                <a href={contact.social.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-base transition-all hover:bg-white/10 hover:scale-110 sm:h-10 sm:w-10 sm:text-lg">
+                  💼
+                </a>
+              )}
+              {contact.social.youtube && (
+                <a href={contact.social.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-base transition-all hover:bg-white/10 hover:scale-110 sm:h-10 sm:w-10 sm:text-lg">
+                  📺
+                </a>
+              )}
             </div>
           </div>
 
@@ -154,9 +192,10 @@ export default function Footer() {
                   />
                   <button
                     type="submit"
-                    className="flex-shrink-0 rounded-lg bg-gradient-to-r from-violet-600 to-purple-600 px-3 py-2 text-sm font-semibold transition-all hover:shadow-lg hover:shadow-violet-500/30 sm:px-4"
+                    disabled={isLoading}
+                    className="flex-shrink-0 rounded-lg bg-gradient-to-r from-violet-600 to-purple-600 px-3 py-2 text-sm font-semibold transition-all hover:shadow-lg hover:shadow-violet-500/30 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4"
                   >
-                    Subscribe
+                    {isLoading ? '...' : 'Subscribe'}
                   </button>
                 </form>
               )}

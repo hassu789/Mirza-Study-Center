@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
+import { useToast } from '@/components/Toast';
 import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
 import { courses, instructors } from '@/data/courses';
@@ -13,6 +14,7 @@ import { courseImages, teacherImages, images } from '@/data/images';
 export default function CourseDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const router = useRouter();
+  const { showToast } = useToast();
   const course = courses.find((c) => c.id === resolvedParams.id);
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -56,6 +58,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
       if (data.success) {
         setIsEnrolled(true);
         setEnrollMsg(data.message);
+        showToast('Enrolled! Check your email for confirmation.', 'success');
       } else {
         setEnrollMsg(data.error || 'Failed to enroll');
       }

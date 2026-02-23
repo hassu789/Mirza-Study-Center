@@ -74,6 +74,8 @@ async function ensureIndexes(db: Db) {
         .collection("attendance")
         .createIndex({ enrollmentId: 1, date: 1 }, { unique: true }),
       db.collection("attendance").createIndex({ enrollmentId: 1 }),
+      // Newsletter subscribers
+      db.collection("newsletter").createIndex({ email: 1 }, { unique: true }),
     ]);
     globalWithMongo._indexesCreated = true;
   } catch (err) {

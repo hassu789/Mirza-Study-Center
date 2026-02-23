@@ -263,7 +263,8 @@ export default function AdminPage() {
           {/* ─── Inquiries Tab ─────────────────── */}
           {activeTab === 'inquiries' && (
             <div>
-              <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
                 {(['all', 'new', 'contacted', 'resolved'] as const).map((s) => (
                   <button
                     key={s}
@@ -278,6 +279,35 @@ export default function AdminPage() {
                     <p className="text-xs capitalize text-slate-500 dark:text-slate-400">{s === 'all' ? 'Total' : s}</p>
                   </button>
                 ))}
+                </div>
+                {filteredInquiries.length > 0 && (
+                  <button
+                    onClick={() => {
+                      const headers = ['Date', 'Name', 'Email', 'Phone', 'Class', 'Subject', 'Message', 'Status'];
+                      const rows = filteredInquiries.map((i) => [
+                        new Date(i.createdAt).toISOString(),
+                        `"${(i.name || '').replace(/"/g, '""')}"`,
+                        i.email || '',
+                        i.phone || '',
+                        i.class || '',
+                        i.subject || '',
+                        `"${(i.message || '').replace(/"/g, '""')}"`,
+                        i.status || '',
+                      ]);
+                      const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+                      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `inquiries-${new Date().toISOString().slice(0, 10)}.csv`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    }}
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-slate-300 dark:hover:bg-zinc-700"
+                  >
+                    Export CSV
+                  </button>
+                )}
               </div>
 
               {filteredInquiries.length === 0 ? (
