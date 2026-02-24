@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { contact } from '@/data/contact';
+import { theme, typo } from '@/styles';
 
 export default function WhatsAppButton() {
   const [visible, setVisible] = useState(false);
@@ -21,7 +22,7 @@ export default function WhatsAppButton() {
       {/* Tooltip */}
       {showTooltip && (
         <div
-          className="rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white shadow-xl dark:bg-zinc-800"
+          className={`rounded-lg bg-slate-900 px-4 py-2.5 ${typo.label} ${theme.textWhite} shadow-xl dark:bg-dark-800`}
           role="tooltip"
         >
           <span className="relative">Chat on WhatsApp</span>

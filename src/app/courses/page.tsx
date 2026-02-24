@@ -7,6 +7,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
 import AnimatedCard from '@/components/AnimatedCard';
+import { theme, typo } from '@/styles';
 import { courses } from '@/data/courses';
 import { courseImages, images } from '@/data/images';
 
@@ -27,11 +28,11 @@ export default function CoursesPage() {
   });
 
   return (
-    <div className="flex min-h-screen flex-col bg-white dark:bg-zinc-950">
+    <div className="flex min-h-screen flex-col bg-white dark:bg-dark-950">
       <Header />
       
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-violet-900 to-slate-900">
+      <section className={`relative overflow-hidden ${theme.gradientHero}`}>
         <div className="absolute inset-0">
           <Image
             src={images.hero.library}
@@ -41,13 +42,13 @@ export default function CoursesPage() {
           />
         </div>
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-violet-500/20 blur-3xl"></div>
+          <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-primary-500/20 blur-3xl"></div>
           <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-blue-500/20 blur-3xl"></div>
         </div>
         <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <AnimatedSection animation="fade-up">
             <h1 className="mb-4 text-center text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
-              Explore Our <span className="text-violet-400">Courses</span>
+              Explore Our <span className="text-primary-400">Courses</span>
             </h1>
             <p className="mx-auto mb-8 max-w-2xl text-center text-lg text-slate-300">
               Find the perfect course for your academic journey. Expert teachers, comprehensive curriculum, proven results.
@@ -64,7 +65,7 @@ export default function CoursesPage() {
                   aria-label="Search courses"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full rounded-2xl border-0 bg-white/10 px-6 py-4 pl-14 text-white placeholder-slate-400 backdrop-blur-sm ring-1 ring-white/20 transition-all focus:bg-white/15 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                  className="w-full rounded-2xl border-0 bg-white/10 px-6 py-4 pl-14 text-white placeholder-slate-400 backdrop-blur-sm ring-1 ring-white/20 transition-all focus:bg-white/15 focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
                 <svg className="absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -79,7 +80,7 @@ export default function CoursesPage() {
       <section className="flex-1 px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           {/* Filters */}
-          <AnimatedSection animation="fade-up" className="mb-8 rounded-2xl bg-slate-50 p-6 dark:bg-zinc-900">
+          <AnimatedSection animation="fade-up" className="mb-8 rounded-2xl bg-slate-50 p-6 dark:bg-dark-900">
             <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
               <div>
                 <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Subject</label>
@@ -90,8 +91,8 @@ export default function CoursesPage() {
                       onClick={() => setSelectedCategory(category)}
                       className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
                         selectedCategory === category
-                          ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/30'
-                          : 'bg-white text-slate-600 hover:bg-violet-50 dark:bg-zinc-800 dark:text-slate-400 dark:hover:bg-zinc-700'
+                          ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/30'
+                          : 'bg-white text-slate-600 hover:bg-primary-50 dark:bg-dark-800 dark:text-slate-400 dark:hover:bg-dark-700'
                       }`}
                     >
                       {category}
@@ -109,7 +110,7 @@ export default function CoursesPage() {
                       className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
                         selectedLevel === level
                           ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/30'
-                          : 'bg-white text-slate-600 hover:bg-emerald-50 dark:bg-zinc-800 dark:text-slate-400 dark:hover:bg-zinc-700'
+                          : 'bg-white text-slate-600 hover:bg-emerald-50 dark:bg-dark-800 dark:text-slate-400 dark:hover:bg-dark-700'
                       }`}
                     >
                       {level}
@@ -122,8 +123,8 @@ export default function CoursesPage() {
 
           {/* Results Count */}
           <AnimatedSection animation="fade-up" className="mb-6 flex items-center justify-between">
-            <p className="text-slate-600 dark:text-slate-400">
-              Showing <span className="font-semibold text-slate-900 dark:text-white">{filteredCourses.length}</span> courses
+            <p className={theme.textBody}>
+              Showing <span className={`font-semibold ${theme.textHeading}`}>{filteredCourses.length}</span> courses
             </p>
           </AnimatedSection>
 
@@ -134,7 +135,7 @@ export default function CoursesPage() {
                 <AnimatedCard key={course.id} index={index} baseDelay={50} staggerDelay={50}>
                   <Link
                     href={`/courses/${course.id}`}
-                    className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all hover:shadow-2xl hover:-translate-y-2 dark:border-zinc-800 dark:bg-zinc-900"
+                    className={`group flex h-full flex-col overflow-hidden rounded-2xl border ${theme.borderCard} ${theme.bgCard} transition-all hover:shadow-2xl hover:-translate-y-2`}
                   >
                     <div className="relative h-48 flex-shrink-0 overflow-hidden sm:h-52">
                       <Image
@@ -145,7 +146,7 @@ export default function CoursesPage() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
                       <div className="absolute top-3 left-3 flex flex-wrap gap-2 sm:top-4 sm:left-4">
-                        <span className="rounded-full bg-violet-600 px-3 py-1 text-xs font-semibold text-white shadow-lg">
+                        <span className="rounded-full bg-primary-600 px-3 py-1 text-xs font-semibold text-white shadow-lg">
                           {course.category}
                         </span>
                         <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-700 shadow-lg backdrop-blur">
@@ -158,15 +159,15 @@ export default function CoursesPage() {
                       </div>
                     </div>
                     <div className="flex flex-1 flex-col p-4 sm:p-5">
-                      <h3 className="mb-2 text-base font-bold text-slate-900 transition-colors group-hover:text-violet-600 dark:text-white dark:group-hover:text-violet-400 sm:text-lg">
+                      <h3 className={`mb-2 text-base font-bold ${theme.textHeading} transition-colors group-hover:text-primary-600 dark:group-hover:text-primary-400 sm:text-lg`}>
                         {course.title}
                       </h3>
-                      <p className="mb-4 line-clamp-2 text-sm text-slate-600 dark:text-slate-400">
+                      <p className={`mb-4 line-clamp-2 text-sm ${theme.textBody}`}>
                         {course.description}
                       </p>
-                      <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-4 dark:border-zinc-800">
+                      <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-4 dark:border-dark-800">
                         <div className="flex items-center gap-2">
-                          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-purple-600 text-xs font-bold text-white shadow-md">
+                          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary-600 to-primary-700 text-xs font-bold text-white shadow-md">
                             {course.instructorAvatar}
                           </div>
                           <span className="text-sm font-medium text-slate-700 dark:text-slate-300 line-clamp-1">{course.instructor}</span>
@@ -191,14 +192,14 @@ export default function CoursesPage() {
             </div>
           ) : (
             <AnimatedSection animation="fade-up">
-              <div className="rounded-2xl bg-slate-50 p-12 text-center dark:bg-zinc-900">
-                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-slate-200 dark:bg-zinc-800">
+              <div className="rounded-2xl bg-slate-50 p-12 text-center dark:bg-dark-900">
+                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-slate-200 dark:bg-dark-800">
                   <svg className="h-10 w-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="mb-2 text-xl font-bold text-slate-900 dark:text-white">No courses found</h3>
-                <p className="text-slate-600 dark:text-slate-400">Try adjusting your filters or search term</p>
+                <h3 className={`mb-2 text-xl font-bold ${theme.textHeading}`}>No courses found</h3>
+                <p className={theme.textBody}>Try adjusting your filters or search term</p>
               </div>
             </AnimatedSection>
           )}

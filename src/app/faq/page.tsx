@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { theme, typo } from '@/styles';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
@@ -66,15 +67,15 @@ export default function FAQPage() {
   ];
 
   return (
-    <div className="flex min-h-screen flex-col bg-white dark:bg-zinc-950">
+    <div className="flex min-h-screen flex-col bg-white dark:bg-dark-950">
       <Header />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-violet-900 to-slate-900">
+      <section className={`relative overflow-hidden ${theme.gradientHero}`}>
         <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
           <AnimatedSection animation="fade-up">
             <h1 className="mb-3 text-center text-3xl font-bold text-white sm:mb-4 sm:text-4xl lg:text-5xl">
-              Frequently Asked <span className="text-violet-400">Questions</span>
+              Frequently Asked <span className="text-primary-400">Questions</span>
             </h1>
             <p className="mx-auto max-w-3xl text-center text-sm text-slate-300 sm:text-lg">
               Find answers to common questions about Mirza Study Centre, our courses, enrollment, and more.
@@ -89,14 +90,14 @@ export default function FAQPage() {
           <div className="space-y-3 sm:space-y-4">
             {faqs.map((faq, index) => (
               <AnimatedSection key={index} animation="fade-up" delay={index * 50}>
-                <div className="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-zinc-800 dark:bg-zinc-900 sm:rounded-2xl">
+                <div className={`overflow-hidden rounded-xl border ${theme.borderCard} ${theme.bgCard} sm:rounded-2xl`}>
                   <button
                     onClick={() => setOpenIndex(openIndex === index ? null : index)}
                     aria-expanded={openIndex === index}
                     aria-controls={`faq-answer-${index}`}
-                    className="flex w-full items-center justify-between gap-3 p-4 text-left transition-colors hover:bg-slate-50 dark:hover:bg-zinc-800 sm:p-6"
+                    className="flex w-full items-center justify-between gap-3 p-4 text-left transition-colors hover:bg-slate-50 dark:hover:bg-dark-800 sm:p-6"
                   >
-                    <span className="text-sm font-semibold text-slate-900 dark:text-white sm:text-base">{faq.question}</span>
+                    <span className={`text-sm font-semibold ${theme.textHeading} sm:text-base`}>{faq.question}</span>
                     <svg
                       className={`h-4 w-4 flex-shrink-0 text-slate-500 transition-transform sm:h-5 sm:w-5 ${
                         openIndex === index ? 'rotate-180' : ''
@@ -109,8 +110,8 @@ export default function FAQPage() {
                     </svg>
                   </button>
                   {openIndex === index && (
-                    <div id={`faq-answer-${index}`} role="region" className="border-t border-slate-100 px-4 py-3 dark:border-zinc-800 sm:px-6 sm:py-4">
-                      <p className="text-sm text-slate-600 dark:text-slate-400 sm:text-base">{faq.answer}</p>
+                    <div id={`faq-answer-${index}`} role="region" className="border-t border-slate-100 px-4 py-3 dark:border-dark-800 sm:px-6 sm:py-4">
+                      <p className={`text-sm ${theme.textBody} sm:text-base`}>{faq.answer}</p>
                     </div>
                   )}
                 </div>
@@ -120,17 +121,17 @@ export default function FAQPage() {
 
           {/* Contact CTA */}
           <AnimatedSection animation="fade-up" delay={600} className="mt-8 sm:mt-12">
-            <div className="rounded-2xl bg-gradient-to-br from-violet-600 to-purple-600 p-6 text-center text-white sm:p-8">
+            <div className="rounded-2xl bg-gradient-to-br from-primary-600 to-primary-700 p-6 text-center text-white sm:p-8">
               <h2 className="mb-3 text-xl font-bold sm:mb-4 sm:text-2xl">Still have questions?</h2>
-              <p className="mb-2 text-sm text-violet-100 sm:text-base">
+              <p className="mb-2 text-sm text-primary-100 sm:text-base">
                 Our team is here to help! Get in touch with us and we&apos;ll answer any questions you have.
               </p>
-              <p className="mb-4 text-xs text-violet-200 sm:mb-6 sm:text-sm">
+              <p className="mb-4 text-xs text-primary-200 sm:mb-6 sm:text-sm">
                 📞 +91 96702 12323 | 📍 Beside Shibli Inter College, Pandey Bazar, Azamgarh
               </p>
               <Link
                 href="/inquiry"
-                className="inline-block rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-violet-600 transition-all hover:bg-violet-50 sm:px-8 sm:py-3 sm:text-base"
+                className="inline-block rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-primary-600 transition-all hover:bg-primary-50 sm:px-8 sm:py-3 sm:text-base"
               >
                 Contact Us
               </Link>

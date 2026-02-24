@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { contact } from '@/data/contact';
 import { useToast } from '@/components/Toast';
+import { theme, typo } from '@/styles';
 
 export default function Footer() {
   const { showToast } = useToast();
@@ -39,11 +40,11 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative overflow-hidden border-t border-slate-200 bg-slate-900 text-white dark:border-zinc-800 dark:bg-black">
+    <footer className={`relative overflow-hidden border-t ${theme.borderCard} ${theme.bgFooter} text-white`}>
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-violet-500/10 blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-purple-500/10 blur-3xl"></div>
+        <div className={`absolute -top-40 -right-40 h-80 w-80 rounded-full ${theme.blurViolet}`}></div>
+        <div className={`absolute -bottom-40 -left-40 h-80 w-80 rounded-full ${theme.blurPurple}`}></div>
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
@@ -51,10 +52,10 @@ export default function Footer() {
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-4">
             <Link href="/" className="group mb-4 inline-flex items-center gap-2 sm:mb-6 sm:gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 text-sm font-bold shadow-lg shadow-violet-500/30 transition-transform group-hover:scale-105 sm:h-12 sm:w-12 sm:text-lg">
+              <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${theme.gradientBrand} text-sm font-bold shadow-lg shadow-primary-500/30 transition-transform group-hover:scale-105 sm:h-12 sm:w-12 sm:text-lg`}>
                 MSC
               </div>
-              <span className="text-xl font-bold sm:text-2xl">Mirza Study Centre</span>
+              <span className={typo.brandName}>Mirza Study Centre</span>
             </Link>
             <p className="mb-4 max-w-sm text-sm text-slate-400 sm:mb-6">
               Empowering students with quality education. Your trusted partner for academic excellence in Azamgarh.
@@ -92,7 +93,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div className="lg:col-span-2">
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white sm:mb-6">
+            <h3 className={`mb-4 ${typo.sectionTitle} text-white sm:mb-6`}>
               Quick Links
             </h3>
             <ul className="space-y-2 sm:space-y-3">
@@ -119,7 +120,7 @@ export default function Footer() {
 
           {/* Courses */}
           <div className="lg:col-span-2">
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white sm:mb-6">
+            <h3 className={`mb-4 ${typo.sectionTitle} text-white sm:mb-6`}>
               Courses
             </h3>
             <ul className="space-y-2 sm:space-y-3">
@@ -139,7 +140,7 @@ export default function Footer() {
 
           {/* Contact & Newsletter */}
           <div className="sm:col-span-2 lg:col-span-4">
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white sm:mb-6">
+            <h3 className={`mb-4 ${typo.sectionTitle} text-white sm:mb-6`}>
               Contact Us
             </h3>
             <div className="mb-4 space-y-2 text-sm text-slate-400 sm:mb-6 sm:space-y-3">
@@ -151,7 +152,7 @@ export default function Footer() {
                     href={contact.mapDirectionsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-violet-400 hover:text-violet-300 underline"
+                    className={`${theme.textLink} underline`}
                   >
                     View on Map
                   </a>
@@ -189,12 +190,12 @@ export default function Footer() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Your email"
                     required
-                    className="min-w-0 flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-violet-500 focus:outline-none sm:px-4"
+                    className="min-w-0 flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-primary-500 focus:outline-none sm:px-4"
                   />
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="flex-shrink-0 rounded-lg bg-gradient-to-r from-violet-600 to-purple-600 px-3 py-2 text-sm font-semibold transition-all hover:shadow-lg hover:shadow-violet-500/30 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4"
+                    className={`flex-shrink-0 rounded-lg ${theme.gradientBrandText} px-3 py-2 text-sm font-semibold transition-all hover:shadow-lg hover:shadow-primary-500/30 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4`}
                   >
                     {isLoading ? '...' : 'Subscribe'}
                   </button>

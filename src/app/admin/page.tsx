@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { theme, typo, statusColors } from '@/styles';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
@@ -51,16 +52,6 @@ interface AttendanceSummary {
 }
 
 type Tab = 'inquiries' | 'students' | 'enrollments' | 'attendance';
-
-const statusColors: Record<string, string> = {
-  new: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
-  contacted: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-  resolved: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
-  active: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
-  completed: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
-  paid: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
-  pending: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-};
 
 export default function AdminPage() {
   const router = useRouter();
@@ -223,31 +214,31 @@ export default function AdminPage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white dark:bg-zinc-950">
+      <div className="flex min-h-screen items-center justify-center bg-white dark:bg-dark-950">
         <div className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-violet-200 border-t-violet-600" />
-          <p className="text-slate-600 dark:text-slate-400">Loading admin panel...</p>
+          <div className={`mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 ${theme.spinner}`} />
+          <p className={theme.textBody}>Loading admin panel...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-zinc-950">
+    <div className={`flex min-h-screen flex-col ${theme.bgPage}`}>
       <Header />
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-slate-900 via-violet-900 to-slate-900 px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+      <section className={`${theme.gradientHero} px-4 py-8 sm:px-6 sm:py-12 lg:px-8`}>
         <div className="mx-auto max-w-7xl">
           <AnimatedSection animation="fade-up">
-            <h1 className="text-2xl font-bold text-white sm:text-3xl">Admin Dashboard</h1>
+            <h1 className={`${typo.h1} ${theme.textWhite}`}>Admin Dashboard</h1>
             <p className="mt-1 text-sm text-slate-300 sm:text-base">Manage students, enrollments, and inquiries</p>
           </AnimatedSection>
         </div>
       </section>
 
       {/* Tabs */}
-      <div className="border-b border-slate-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+      <div className={`border-b ${theme.borderCard} ${theme.bgCard}`}>
         <div className="mx-auto flex max-w-7xl overflow-x-auto px-4 sm:px-6 lg:px-8">
           {tabs.map((tab) => (
             <button
@@ -255,16 +246,16 @@ export default function AdminPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`relative flex-shrink-0 px-4 py-3 text-sm font-medium transition-colors sm:px-6 sm:py-4 ${
                 activeTab === tab.id
-                  ? 'text-violet-600 dark:text-violet-400'
-                  : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'
+                  ? theme.textAccent
+                  : `${theme.textMuted} hover:text-slate-700`
               }`}
             >
               {tab.label}
-              <span className="ml-1.5 rounded-full bg-slate-100 px-2 py-0.5 text-xs dark:bg-zinc-800">
+              <span className="ml-1.5 rounded-full bg-slate-100 px-2 py-0.5 text-xs dark:bg-dark-800">
                 {tab.count}
               </span>
               {activeTab === tab.id && (
-                <span className="absolute inset-x-0 bottom-0 h-0.5 bg-violet-600 dark:bg-violet-400" />
+                <span className="absolute inset-x-0 bottom-0 h-0.5 bg-primary-600 dark:bg-primary-400" />
               )}
             </button>
           ))}
@@ -291,12 +282,12 @@ export default function AdminPage() {
                     onClick={() => setInqFilter(s)}
                     className={`rounded-xl border p-3 text-left transition-all ${
                       inqFilter === s
-                        ? 'border-violet-500 bg-violet-50 dark:border-violet-400 dark:bg-violet-900/20'
-                        : 'border-slate-200 bg-white hover:border-slate-300 dark:border-zinc-800 dark:bg-zinc-900'
+                        ? 'border-primary-500 bg-primary-50 dark:border-primary-400 dark:bg-primary-900/20'
+                        : `${theme.borderCard} ${theme.bgCard} hover:border-slate-300`
                     }`}
                   >
-                    <p className="text-xl font-bold text-slate-900 dark:text-white">{inqCounts[s]}</p>
-                    <p className="text-xs capitalize text-slate-500 dark:text-slate-400">{s === 'all' ? 'Total' : s}</p>
+                    <p className={`text-xl font-bold ${theme.textHeading}`}>{inqCounts[s]}</p>
+                    <p className={`text-xs capitalize ${theme.textMuted}`}>{s === 'all' ? 'Total' : s}</p>
                   </button>
                 ))}
                 </div>
@@ -323,7 +314,7 @@ export default function AdminPage() {
                       a.click();
                       URL.revokeObjectURL(url);
                     }}
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-slate-300 dark:hover:bg-zinc-700"
+                    className={theme.btnOutline}
                   >
                     Export CSV
                   </button>
@@ -331,26 +322,26 @@ export default function AdminPage() {
               </div>
 
               {filteredInquiries.length === 0 ? (
-                <div className="rounded-xl border border-slate-200 bg-white p-12 text-center dark:border-zinc-800 dark:bg-zinc-900">
-                  <p className="text-slate-500 dark:text-slate-400">No inquiries found.</p>
+                <div className={`${theme.card} p-12 text-center`}>
+                  <p className={theme.textMuted}>No inquiries found.</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {filteredInquiries.map((inq) => (
-                    <div key={inq._id} className="rounded-xl border border-slate-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+                    <div key={inq._id} className={`${theme.card} p-4`}>
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                         <div className="flex-1">
                           <div className="mb-1 flex flex-wrap items-center gap-2">
-                            <h3 className="font-semibold text-slate-900 dark:text-white">{inq.name}</h3>
+                            <h3 className={`font-semibold ${theme.textHeading}`}>{inq.name}</h3>
                             <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColors[inq.status]}`}>
                               {inq.status}
                             </span>
                           </div>
-                          <div className="space-y-0.5 text-sm text-slate-600 dark:text-slate-400">
+                          <div className={`space-y-0.5 text-sm ${theme.textBody}`}>
                             <p>{inq.email} &bull; {inq.phone}</p>
                             <p>{inq.class} &bull; {inq.subject}</p>
-                            {inq.message && <p className="text-slate-500">&ldquo;{inq.message}&rdquo;</p>}
-                            <p className="text-xs text-slate-400">
+                            {inq.message && <p className={theme.textMuted}>&ldquo;{inq.message}&rdquo;</p>}
+                            <p className={`text-xs ${theme.textFaint}`}>
                               {new Date(inq.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                             </p>
                           </div>
@@ -384,22 +375,22 @@ export default function AdminPage() {
                   placeholder="Search by name or email..."
                   value={studentSearch}
                   onChange={(e) => setStudentSearch(e.target.value)}
-                  className="flex-1 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+                  className={`flex-1 ${theme.input}`}
                 />
-                <button type="submit" className="rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-700">
+                <button type="submit" className={theme.btnPrimary}>
                   Search
                 </button>
               </form>
 
               {students.length === 0 ? (
-                <div className="rounded-xl border border-slate-200 bg-white p-12 text-center dark:border-zinc-800 dark:bg-zinc-900">
-                  <p className="text-slate-500 dark:text-slate-400">No students found.</p>
+                <div className={`${theme.card} p-12 text-center`}>
+                  <p className={theme.textMuted}>No students found.</p>
                 </div>
               ) : (
                 <>
-                  <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+                  <div className={`overflow-x-auto ${theme.card}`}>
                     <table className="w-full text-left text-sm">
-                      <thead className="border-b border-slate-200 bg-slate-50 dark:border-zinc-700 dark:bg-zinc-800">
+                      <thead className="border-b border-slate-200 bg-slate-50 dark:border-dark-700 dark:bg-dark-800">
                         <tr>
                           <th className="px-4 py-3 font-semibold text-slate-700 dark:text-slate-300">Name</th>
                           <th className="px-4 py-3 font-semibold text-slate-700 dark:text-slate-300">Email</th>
@@ -408,20 +399,20 @@ export default function AdminPage() {
                           <th className="px-4 py-3 font-semibold text-slate-700 dark:text-slate-300">Joined</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100 dark:divide-zinc-800">
+                      <tbody className="divide-y divide-slate-100 dark:divide-dark-800">
                         {students.map((s) => (
-                          <tr key={s.id} className="hover:bg-slate-50 dark:hover:bg-zinc-800/50">
-                            <td className="px-4 py-3 font-medium text-slate-900 dark:text-white">{s.name}</td>
-                            <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{s.email}</td>
+                          <tr key={s.id} className="hover:bg-slate-50 dark:hover:bg-dark-800/50">
+                            <td className={`px-4 py-3 font-medium ${theme.textHeading}`}>{s.name}</td>
+                            <td className={`px-4 py-3 ${theme.textBody}`}>{s.email}</td>
                             <td className="px-4 py-3">
                               <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                                s.role === 'admin' ? 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400' : 'bg-slate-100 text-slate-600 dark:bg-zinc-800 dark:text-slate-400'
+                                s.role === 'admin' ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400' : 'bg-slate-100 text-slate-600 dark:bg-dark-800 dark:text-slate-400'
                               }`}>
                                 {s.role}
                               </span>
                             </td>
-                            <td className="px-4 py-3 font-semibold text-slate-900 dark:text-white">{s.enrollmentCount}</td>
-                            <td className="px-4 py-3 text-xs text-slate-500">
+                            <td className={`px-4 py-3 font-semibold ${theme.textHeading}`}>{s.enrollmentCount}</td>
+                            <td className={`px-4 py-3 text-xs ${theme.textMuted}`}>
                               {s.createdAt ? new Date(s.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
                             </td>
                           </tr>
@@ -436,17 +427,17 @@ export default function AdminPage() {
                       <button
                         disabled={studentPage <= 1}
                         onClick={() => { setStudentPage(studentPage - 1); fetchStudents(studentPage - 1, studentSearch); }}
-                        className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm disabled:opacity-40 dark:border-zinc-700"
+                        className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm disabled:opacity-40 dark:border-dark-700"
                       >
                         Prev
                       </button>
-                      <span className="text-sm text-slate-600 dark:text-slate-400">
+                      <span className={`text-sm ${theme.textBody}`}>
                         Page {studentPage} of {studentPages}
                       </span>
                       <button
                         disabled={studentPage >= studentPages}
                         onClick={() => { setStudentPage(studentPage + 1); fetchStudents(studentPage + 1, studentSearch); }}
-                        className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm disabled:opacity-40 dark:border-zinc-700"
+                        className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm disabled:opacity-40 dark:border-dark-700"
                       >
                         Next
                       </button>
@@ -467,8 +458,8 @@ export default function AdminPage() {
                     onClick={() => setEnrollFilter(f)}
                     className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
                       enrollFilter === f
-                        ? 'bg-violet-600 text-white'
-                        : 'bg-white text-slate-600 hover:bg-slate-50 dark:bg-zinc-800 dark:text-slate-400'
+                        ? 'bg-primary-600 text-white'
+                        : 'bg-white text-slate-600 hover:bg-slate-50 dark:bg-dark-800 dark:text-slate-400'
                     }`}
                   >
                     {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1)} ({f === 'all' ? enrollments.length : enrollments.filter((e) => e.paymentStatus === f).length})
@@ -477,19 +468,19 @@ export default function AdminPage() {
               </div>
 
               {filteredEnrollments.length === 0 ? (
-                <div className="rounded-xl border border-slate-200 bg-white p-12 text-center dark:border-zinc-800 dark:bg-zinc-900">
-                  <p className="text-slate-500 dark:text-slate-400">No enrollments found.</p>
+                <div className={`${theme.card} p-12 text-center`}>
+                  <p className={theme.textMuted}>No enrollments found.</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {filteredEnrollments.map((e) => (
-                    <div key={e._id} className="rounded-xl border border-slate-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+                    <div key={e._id} className={`${theme.card} p-4`}>
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-slate-900 dark:text-white">{e.studentName}</h3>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">{e.studentEmail}</p>
-                          <p className="mt-1 text-sm text-violet-600 dark:text-violet-400">{e.courseTitle}</p>
-                          <p className="text-xs text-slate-400">
+                          <h3 className={`font-semibold ${theme.textHeading}`}>{e.studentName}</h3>
+                          <p className={`text-xs ${theme.textMuted}`}>{e.studentEmail}</p>
+                          <p className={`mt-1 text-sm ${theme.textAccent}`}>{e.courseTitle}</p>
+                          <p className={`text-xs ${theme.textFaint}`}>
                             Enrolled {new Date(e.enrolledAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                           </p>
                         </div>
@@ -497,11 +488,11 @@ export default function AdminPage() {
                         <div className="flex flex-wrap items-center gap-2">
                           {/* Progress */}
                           <div className="flex items-center gap-1">
-                            <span className="text-xs text-slate-500 dark:text-slate-400">Progress:</span>
+                            <span className={`text-xs ${theme.textMuted}`}>Progress:</span>
                             <select
                               value={e.progress}
                               onChange={(ev) => updateEnrollment(e._id, 'progress', Number(ev.target.value))}
-                              className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+                              className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs dark:border-dark-700 dark:bg-dark-800 dark:text-white"
                             >
                               {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((v) => (
                                 <option key={v} value={v}>{v}%</option>
@@ -537,16 +528,16 @@ export default function AdminPage() {
             <div>
               <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-600 dark:text-slate-400">Date</label>
+                  <label className={`mb-1 block text-sm font-medium ${theme.textBody}`}>Date</label>
                   <input
                     type="date"
                     value={attDate}
                     onChange={(e) => setAttDate(e.target.value)}
-                    className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+                    className={theme.input}
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="mb-1 block text-sm font-medium text-slate-600 dark:text-slate-400">Course Filter</label>
+                  <label className={`mb-1 block text-sm font-medium ${theme.textBody}`}>Course Filter</label>
                   <select
                     value={attEnrollmentId ? enrollments.find((e) => e._id === attEnrollmentId)?.courseId || '' : ''}
                     onChange={(e) => {
@@ -558,7 +549,7 @@ export default function AdminPage() {
                           .forEach((en) => fetchAttendanceSummary(en._id));
                       }
                     }}
-                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+                    className={`w-full ${theme.input}`}
                   >
                     <option value="">All Courses</option>
                     {[...new Set(enrollments.filter((e) => e.status === 'active').map((e) => e.courseId))].map((cid) => {
@@ -572,8 +563,8 @@ export default function AdminPage() {
               </div>
 
               {enrollments.filter((e) => e.status === 'active').length === 0 ? (
-                <div className="rounded-xl border border-slate-200 bg-white p-12 text-center dark:border-zinc-800 dark:bg-zinc-900">
-                  <p className="text-slate-500 dark:text-slate-400">No active enrollments to mark attendance for.</p>
+                <div className={`${theme.card} p-12 text-center`}>
+                  <p className={theme.textMuted}>No active enrollments to mark attendance for.</p>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -582,10 +573,10 @@ export default function AdminPage() {
                     .map((e) => {
                       const summary = attSummaries.get(e._id);
                       return (
-                        <div key={e._id} className="flex flex-col gap-2 rounded-xl border border-slate-200 bg-white p-3 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800 dark:bg-zinc-900">
+                        <div key={e._id} className={`flex flex-col gap-2 ${theme.card} p-3 sm:flex-row sm:items-center sm:justify-between`}>
                           <div className="min-w-0 flex-1">
-                            <p className="font-medium text-slate-900 dark:text-white">{e.studentName}</p>
-                            <p className="text-xs text-slate-500 dark:text-slate-400">{e.courseTitle}</p>
+                            <p className={`font-medium ${theme.textHeading}`}>{e.studentName}</p>
+                            <p className={`text-xs ${theme.textMuted}`}>{e.courseTitle}</p>
                           </div>
                           <div className="flex items-center gap-2">
                             {summary && (
@@ -602,7 +593,7 @@ export default function AdminPage() {
                             {!summary && (
                               <button
                                 onClick={() => fetchAttendanceSummary(e._id)}
-                                className="text-xs text-violet-600 hover:text-violet-700 dark:text-violet-400"
+                                className={`text-xs ${theme.textAccent} hover:text-primary-700`}
                               >
                                 Load
                               </button>

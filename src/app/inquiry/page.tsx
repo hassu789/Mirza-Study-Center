@@ -1,5 +1,6 @@
 'use client';
 
+import { theme, typo } from '@/styles';
 import { useState } from 'react';
 import Image from 'next/image';
 import Header from '@/components/Header';
@@ -142,11 +143,11 @@ export default function InquiryPage() {
   ];
 
   return (
-    <div className="flex min-h-screen flex-col bg-white dark:bg-zinc-950">
+    <div className="flex min-h-screen flex-col bg-white dark:bg-dark-950">
       <Header />
       
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-violet-900 to-slate-900">
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-primary-900 to-slate-900">
         <div className="absolute inset-0">
           <Image
             src={images.features.classroom}
@@ -156,13 +157,13 @@ export default function InquiryPage() {
           />
         </div>
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-violet-500/20 blur-3xl"></div>
+          <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-primary-500/20 blur-3xl"></div>
           <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-blue-500/20 blur-3xl"></div>
         </div>
         <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
           <AnimatedSection animation="fade-up">
             <h1 className="mb-3 text-center text-3xl font-bold text-white sm:mb-4 sm:text-4xl lg:text-5xl">
-              Get in <span className="text-violet-400">Touch</span>
+              Get in <span className="text-primary-400">Touch</span>
             </h1>
             <p className="mx-auto max-w-2xl text-center text-sm text-slate-300 sm:text-lg">
               Have questions? Fill out the form below and our team will contact you within 24 hours.
@@ -190,9 +191,9 @@ export default function InquiryPage() {
                 {contactInfo.map((item, index) => (
                   <div
                     key={index}
-                    className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-3 transition-all hover:shadow-lg dark:border-zinc-800 dark:bg-zinc-900 sm:gap-4 sm:p-4"
+                    className={`flex items-start gap-3 rounded-xl border ${theme.borderCard} ${theme.bgCard} p-3 transition-all hover:shadow-lg sm:gap-4 sm:p-4`}
                   >
-                    <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-violet-100 text-lg dark:bg-violet-900/30 sm:h-12 sm:w-12 sm:text-xl">
+                    <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-primary-100 text-lg dark:bg-primary-900/30 sm:h-12 sm:w-12 sm:text-xl">
                       {item.icon}
                     </span>
                     <div className="min-w-0">
@@ -222,7 +223,7 @@ export default function InquiryPage() {
                   href={contact.mapDirectionsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-violet-600 hover:text-violet-500 dark:text-violet-400 dark:hover:text-violet-300"
+                  className={`inline-flex items-center gap-2 text-sm font-medium ${theme.textAccent} hover:text-primary-500 dark:hover:text-primary-300`}
                 >
                   View on Google Maps →
                 </a>
@@ -231,8 +232,8 @@ export default function InquiryPage() {
 
             {/* Form */}
             <AnimatedSection animation="fade-left">
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xl dark:border-zinc-800 dark:bg-zinc-900 sm:p-8">
-                <h2 className="mb-4 text-xl font-bold text-slate-900 dark:text-white sm:mb-6 sm:text-2xl">
+              <div className={`rounded-2xl border ${theme.borderCard} ${theme.bgCard} p-5 shadow-xl sm:p-8`}>
+                <h2 className={`mb-4 text-xl font-bold sm:mb-6 sm:text-2xl ${theme.textHeading}`}>
                   Send us a Message
                 </h2>
 
@@ -276,10 +277,10 @@ export default function InquiryPage() {
                         value={formData.name}
                         onChange={(e) => handleNameChange(e.target.value)}
                         onBlur={() => handleBlur('name')}
-                        className={`w-full rounded-xl border bg-white px-4 py-3 text-slate-900 transition-all placeholder:text-slate-400 focus:outline-none focus:ring-2 dark:bg-zinc-800 dark:text-white dark:placeholder:text-zinc-500 ${
+                        className={`w-full rounded-xl border bg-white px-4 py-3 text-slate-900 transition-all placeholder:text-slate-400 focus:outline-none focus:ring-2 dark:bg-dark-800 dark:text-white dark:placeholder:text-dark-700 ${
                           errors.name && touched.name
                             ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
-                            : 'border-slate-300 focus:border-violet-500 focus:ring-violet-500/20 dark:border-zinc-700'
+                            : 'border-slate-300 focus:border-primary-500 focus:ring-primary-500/20 dark:border-dark-700'
                         }`}
                         placeholder="Your full name"
                       />
@@ -297,10 +298,10 @@ export default function InquiryPage() {
                         value={formData.email}
                         onChange={(e) => handleEmailChange(e.target.value)}
                         onBlur={() => handleBlur('email')}
-                        className={`w-full rounded-xl border bg-white px-4 py-3 text-slate-900 transition-all placeholder:text-slate-400 focus:outline-none focus:ring-2 dark:bg-zinc-800 dark:text-white dark:placeholder:text-zinc-500 ${
+                        className={`w-full rounded-xl border bg-white px-4 py-3 text-slate-900 transition-all placeholder:text-slate-400 focus:outline-none focus:ring-2 dark:bg-dark-800 dark:text-white dark:placeholder:text-dark-700 ${
                           errors.email && touched.email
                             ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
-                            : 'border-slate-300 focus:border-violet-500 focus:ring-violet-500/20 dark:border-zinc-700'
+                            : 'border-slate-300 focus:border-primary-500 focus:ring-primary-500/20 dark:border-dark-700'
                         }`}
                         placeholder="you@example.com"
                       />
@@ -321,10 +322,10 @@ export default function InquiryPage() {
                         value={formData.phone}
                         onChange={(e) => handlePhoneChange(e.target.value)}
                         onBlur={() => handleBlur('phone')}
-                        className={`w-full rounded-xl border bg-white px-4 py-3 text-slate-900 transition-all placeholder:text-slate-400 focus:outline-none focus:ring-2 dark:bg-zinc-800 dark:text-white dark:placeholder:text-zinc-500 ${
+                        className={`w-full rounded-xl border bg-white px-4 py-3 text-slate-900 transition-all placeholder:text-slate-400 focus:outline-none focus:ring-2 dark:bg-dark-800 dark:text-white dark:placeholder:text-dark-700 ${
                           errors.phone && touched.phone
                             ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
-                            : 'border-slate-300 focus:border-violet-500 focus:ring-violet-500/20 dark:border-zinc-700'
+                            : 'border-slate-300 focus:border-primary-500 focus:ring-primary-500/20 dark:border-dark-700'
                         }`}
                         placeholder="98765 43210"
                         maxLength={10}
@@ -350,10 +351,10 @@ export default function InquiryPage() {
                             setErrors({ ...errors, studentClass: 'Please select a class' });
                           }
                         }}
-                        className={`w-full rounded-xl border bg-white px-4 py-3 text-slate-900 transition-all focus:outline-none focus:ring-2 dark:bg-zinc-800 dark:text-white ${
+                        className={`w-full rounded-xl border bg-white px-4 py-3 text-slate-900 transition-all focus:outline-none focus:ring-2 dark:bg-dark-800 dark:text-white ${
                           errors.studentClass && touched.studentClass
                             ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
-                            : 'border-slate-300 focus:border-violet-500 focus:ring-violet-500/20 dark:border-zinc-700'
+                            : 'border-slate-300 focus:border-primary-500 focus:ring-primary-500/20 dark:border-dark-700'
                         }`}
                       >
                         <option value="">Select class</option>
@@ -384,10 +385,10 @@ export default function InquiryPage() {
                           setErrors({ ...errors, subject: 'Please select a subject' });
                         }
                       }}
-                      className={`w-full rounded-xl border bg-white px-4 py-3 text-slate-900 transition-all focus:outline-none focus:ring-2 dark:bg-zinc-800 dark:text-white ${
+                      className={`w-full rounded-xl border bg-white px-4 py-3 text-slate-900 transition-all focus:outline-none focus:ring-2 dark:bg-dark-800 dark:text-white ${
                         errors.subject && touched.subject
                           ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
-                          : 'border-slate-300 focus:border-violet-500 focus:ring-violet-500/20 dark:border-zinc-700'
+                          : 'border-slate-300 focus:border-primary-500 focus:ring-primary-500/20 dark:border-dark-700'
                       }`}
                     >
                       <option value="">Select subject</option>
@@ -408,7 +409,7 @@ export default function InquiryPage() {
                       rows={4}
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 transition-all placeholder:text-slate-400 focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:placeholder:text-zinc-500"
+                      className={`w-full rounded-xl border ${theme.borderInput} bg-white px-4 py-3 transition-all placeholder:text-slate-400 dark:bg-dark-800 dark:placeholder:text-dark-700 ${theme.focusRing} text-slate-900 dark:text-white`}
                       placeholder="Tell us about your requirements..."
                     />
                   </div>
@@ -416,7 +417,7 @@ export default function InquiryPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 py-4 font-semibold text-white shadow-lg shadow-violet-500/30 transition-all hover:shadow-xl hover:shadow-violet-500/40 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="w-full rounded-xl bg-gradient-to-r from-primary-600 to-primary-700 py-4 font-semibold text-white shadow-lg shadow-primary-500/30 transition-all hover:shadow-xl hover:shadow-primary-500/40 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {isSubmitting ? (
                       <span className="flex items-center justify-center gap-2">

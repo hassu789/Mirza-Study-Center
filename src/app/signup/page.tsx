@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { theme } from '@/styles';
 import AnimatedSection from '@/components/AnimatedSection';
 import { images } from '@/data/images';
 import { validateName, validateEmail, validatePassword, validateConfirmPassword } from '@/utils/validation';
@@ -136,10 +137,10 @@ export default function SignupPage() {
 
   if (isCheckingAuth) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white dark:bg-zinc-950">
+      <div className="flex min-h-screen items-center justify-center bg-white dark:bg-dark-950">
         <div className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-violet-200 border-t-violet-600"></div>
-          <p className="text-slate-600 dark:text-slate-400">Checking authentication...</p>
+          <div className={`mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 ${theme.spinner}`}></div>
+          <p className={theme.textBody}>Checking authentication...</p>
         </div>
       </div>
     );
@@ -156,12 +157,12 @@ export default function SignupPage() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/95 via-violet-900/90 to-slate-900/95"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/95 via-primary-900/90 to-slate-900/95"></div>
       </div>
       
       {/* Animated elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-violet-500/20 blur-3xl animate-pulse"></div>
+        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-primary-500/20 blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-blue-500/20 blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
       </div>
 
@@ -170,7 +171,7 @@ export default function SignupPage() {
           {/* Logo */}
           <div className="mb-6 text-center sm:mb-8">
             <Link href="/" className="inline-flex items-center gap-2 text-xl font-bold text-white sm:text-2xl">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-purple-600 text-sm shadow-lg sm:h-10 sm:w-10">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary-600 to-primary-700 text-sm shadow-lg sm:h-10 sm:w-10">
                 📚
               </span>
               Mirza Study Centre
@@ -203,7 +204,7 @@ export default function SignupPage() {
                   className={`w-full rounded-xl border px-4 py-3 text-white placeholder-slate-400 backdrop-blur transition-all focus:bg-white/15 focus:outline-none focus:ring-2 ${
                     errors.name && touched.name
                       ? 'border-red-500/50 bg-red-500/10 focus:border-red-500 focus:ring-red-500/20'
-                      : 'border-white/20 bg-white/10 focus:border-violet-500 focus:ring-violet-500/20'
+                      : 'border-white/20 bg-white/10 focus:border-primary-500 focus:ring-primary-500/20'
                   }`}
                   placeholder="John Doe"
                 />
@@ -225,7 +226,7 @@ export default function SignupPage() {
                   className={`w-full rounded-xl border px-4 py-3 text-white placeholder-slate-400 backdrop-blur transition-all focus:bg-white/15 focus:outline-none focus:ring-2 ${
                     errors.email && touched.email
                       ? 'border-red-500/50 bg-red-500/10 focus:border-red-500 focus:ring-red-500/20'
-                      : 'border-white/20 bg-white/10 focus:border-violet-500 focus:ring-violet-500/20'
+                      : 'border-white/20 bg-white/10 focus:border-primary-500 focus:ring-primary-500/20'
                   }`}
                   placeholder="john@example.com"
                 />
@@ -247,7 +248,7 @@ export default function SignupPage() {
                   className={`w-full rounded-xl border px-4 py-3 text-white placeholder-slate-400 backdrop-blur transition-all focus:bg-white/15 focus:outline-none focus:ring-2 ${
                     errors.password && touched.password
                       ? 'border-red-500/50 bg-red-500/10 focus:border-red-500 focus:ring-red-500/20'
-                      : 'border-white/20 bg-white/10 focus:border-violet-500 focus:ring-violet-500/20'
+                      : 'border-white/20 bg-white/10 focus:border-primary-500 focus:ring-primary-500/20'
                   }`}
                   placeholder="••••••••"
                 />
@@ -269,7 +270,7 @@ export default function SignupPage() {
                   className={`w-full rounded-xl border px-4 py-3 text-white placeholder-slate-400 backdrop-blur transition-all focus:bg-white/15 focus:outline-none focus:ring-2 ${
                     errors.confirmPassword && touched.confirmPassword
                       ? 'border-red-500/50 bg-red-500/10 focus:border-red-500 focus:ring-red-500/20'
-                      : 'border-white/20 bg-white/10 focus:border-violet-500 focus:ring-violet-500/20'
+                      : 'border-white/20 bg-white/10 focus:border-primary-500 focus:ring-primary-500/20'
                   }`}
                   placeholder="••••••••"
                 />
@@ -281,7 +282,7 @@ export default function SignupPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 py-4 font-semibold text-white shadow-lg shadow-violet-500/30 transition-all hover:shadow-xl hover:shadow-violet-500/40 disabled:cursor-not-allowed disabled:opacity-50"
+                className="w-full rounded-xl bg-gradient-to-r from-primary-600 to-primary-700 py-4 font-semibold text-white shadow-lg shadow-primary-500/30 transition-all hover:shadow-xl hover:shadow-primary-500/40 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isLoading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -300,7 +301,7 @@ export default function SignupPage() {
             <div className="mt-6 text-center">
               <p className="text-slate-300">
                 Already have an account?{' '}
-                <Link href="/login" className="font-semibold text-violet-400 transition-colors hover:text-violet-300">
+                <Link href="/login" className={`font-semibold ${theme.textLink} transition-colors`}>
                   Sign in
                 </Link>
               </p>

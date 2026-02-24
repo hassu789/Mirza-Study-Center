@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { theme } from '@/styles';
 
 type ToastType = 'success' | 'error' | 'info';
 
@@ -33,9 +34,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     }, 3500);
   }, []);
 
-  const colors: Record<ToastType, string> = {
-    success: 'bg-emerald-600 text-white border-emerald-500',
-    error: 'bg-red-600 text-white border-red-500',
+  const toastColors: Record<ToastType, string> = {
+    success: `bg-emerald-600 ${theme.textWhite} border-emerald-500`,
+    error: `bg-red-600 ${theme.textWhite} border-red-500`,
     info: 'bg-slate-800 text-white border-slate-600 dark:bg-slate-700',
   };
 
@@ -49,7 +50,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         {toasts.map((t) => (
           <div
             key={t.id}
-            className={`pointer-events-auto min-w-[240px] max-w-sm rounded-lg border px-4 py-3 text-sm font-medium shadow-lg ${colors[t.type]}`}
+            className={`pointer-events-auto min-w-[240px] max-w-sm rounded-lg border px-4 py-3 text-sm font-medium shadow-lg ${toastColors[t.type]}`}
             role="alert"
           >
             {t.message}

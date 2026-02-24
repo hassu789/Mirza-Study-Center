@@ -1,5 +1,6 @@
 'use client';
 
+import { theme, typo } from '@/styles';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
@@ -74,15 +75,15 @@ export default function TestimonialsPage() {
   ];
 
   return (
-    <div className="flex min-h-screen flex-col bg-white dark:bg-zinc-950">
+    <div className="flex min-h-screen flex-col bg-white dark:bg-dark-950">
       <Header />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-violet-900 to-slate-900">
+      <section className={`relative overflow-hidden ${theme.gradientHero}`}>
         <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
           <AnimatedSection animation="fade-up">
             <h1 className="mb-3 text-center text-3xl font-bold text-white sm:mb-4 sm:text-4xl lg:text-5xl">
-              What Our <span className="text-violet-400">Students Say</span>
+              What Our <span className="text-primary-400">Students Say</span>
             </h1>
             <p className="mx-auto max-w-3xl text-center text-sm text-slate-300 sm:text-lg">
               Don&apos;t just take our word for it. Hear from students who have achieved success with Mirza Study Centre.
@@ -97,7 +98,7 @@ export default function TestimonialsPage() {
           <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
             {testimonials.map((testimonial, index) => (
               <AnimatedCard key={testimonial.name} index={index} baseDelay={50} staggerDelay={50}>
-                <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900 sm:p-6">
+                <div className={`flex h-full flex-col rounded-2xl border ${theme.borderCard} ${theme.bgCard} p-4 sm:p-6`}>
                   {/* Rating */}
                   <div className="mb-3 flex items-center gap-1 sm:mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
@@ -106,13 +107,13 @@ export default function TestimonialsPage() {
                   </div>
 
                   {/* Testimonial Text */}
-                  <p className="mb-4 flex-1 text-sm text-slate-600 dark:text-slate-400 sm:mb-6 sm:text-base">
+                  <p className={`mb-4 flex-1 text-sm ${theme.textBody} sm:mb-6 sm:text-base`}>
                     &quot;{testimonial.text}&quot;
                   </p>
 
                   {/* Student Info */}
-                  <div className="mt-auto flex items-center gap-3 border-t border-slate-100 pt-4 dark:border-zinc-800 sm:gap-4">
-                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-purple-600 text-xs font-bold text-white sm:h-12 sm:w-12 sm:text-sm">
+                  <div className="mt-auto flex items-center gap-3 border-t border-slate-100 pt-4 dark:border-dark-800 sm:gap-4">
+                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary-600 to-primary-700 text-xs font-bold text-white sm:h-12 sm:w-12 sm:text-sm">
                       {testimonial.avatar}
                     </div>
                     <div className="min-w-0">
@@ -131,23 +132,23 @@ export default function TestimonialsPage() {
       </section>
 
       {/* Stats Section */}
-      <section className="bg-slate-50 px-4 py-8 dark:bg-zinc-900 sm:px-6 sm:py-12 lg:px-8">
+      <section className="bg-slate-50 px-4 py-8 dark:bg-dark-900 sm:px-6 sm:py-12 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <AnimatedSection animation="fade-up">
-            <div className="rounded-2xl bg-gradient-to-br from-violet-600 to-purple-600 p-6 text-center text-white sm:p-12">
+            <div className="rounded-2xl bg-gradient-to-br from-primary-600 to-primary-700 p-6 text-center text-white sm:p-12">
               <h2 className="mb-6 text-2xl font-bold sm:mb-8 sm:text-3xl">Join Our Success Stories</h2>
               <div className="grid grid-cols-3 gap-4 sm:gap-8">
                 <div>
                   <div className="mb-1 text-2xl font-bold sm:mb-2 sm:text-4xl">4.9/5</div>
-                  <div className="text-xs text-violet-100 sm:text-base">Average Rating</div>
+                  <div className="text-xs text-primary-100 sm:text-base">Average Rating</div>
                 </div>
                 <div>
                   <div className="mb-1 text-2xl font-bold sm:mb-2 sm:text-4xl">95%</div>
-                  <div className="text-xs text-violet-100 sm:text-base">Results</div>
+                  <div className="text-xs text-primary-100 sm:text-base">Results</div>
                 </div>
                 <div>
                   <div className="mb-1 text-2xl font-bold sm:mb-2 sm:text-4xl">5000+</div>
-                  <div className="text-xs text-violet-100 sm:text-base">Happy Students</div>
+                  <div className="text-xs text-primary-100 sm:text-base">Happy Students</div>
                 </div>
               </div>
             </div>

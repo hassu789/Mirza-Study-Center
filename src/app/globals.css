@@ -3,8 +3,6 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --primary: #0066ff;
-  --primary-dark: #0052cc;
 }
 
 @theme inline {
@@ -12,11 +10,30 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Cobalt Blue — primary brand (#1A5799) */
+  --color-primary-50: #EFF6FF;
+  --color-primary-100: #D6E8F7;
+  --color-primary-200: #ADCFEF;
+  --color-primary-300: #7FB2E2;
+  --color-primary-400: #4E93D2;
+  --color-primary-500: #2478B8;
+  --color-primary-600: #1A5799;
+  --color-primary-700: #164A82;
+  --color-primary-800: #123C6B;
+  --color-primary-900: #0E2F55;
+  --color-primary-950: #091D37;
+
+  /* Eerie Black — dark mode surfaces (#1F1F1F) */
+  --color-dark-950: #141414;
+  --color-dark-900: #1F1F1F;
+  --color-dark-800: #2D2D2D;
+  --color-dark-700: #404040;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #1F1F1F;
     --foreground: #ededed;
   }
 }
