@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { images } from '@/data/images';
 import { theme } from '@/styles';
 
@@ -40,19 +40,19 @@ const slides = [
 
 const INTERVAL = 6000;
 
-const imgVariants = {
+const imgVariants: Variants = {
   enter: { opacity: 0, scale: 1.08 },
-  center: { opacity: 1, scale: 1, transition: { duration: 1.2, ease: 'easeOut' } },
-  exit: { opacity: 0, scale: 1.04, transition: { duration: 0.8, ease: 'easeIn' } },
+  center: { opacity: 1, scale: 1, transition: { duration: 1.2, ease: [0, 0, 0.2, 1] } },
+  exit: { opacity: 0, scale: 1.04, transition: { duration: 0.8, ease: [0.4, 0, 1, 1] } },
 };
 
-const textContainer = {
+const textContainer: Variants = {
   enter: { opacity: 0 },
   center: { opacity: 1, transition: { staggerChildren: 0.12, delayChildren: 0.3 } },
   exit: { opacity: 0, transition: { duration: 0.3 } },
 };
 
-const textChild = {
+const textChild: Variants = {
   enter: { opacity: 0, y: 30 },
   center: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] } },
   exit: { opacity: 0, y: -20, transition: { duration: 0.25 } },
