@@ -4,6 +4,7 @@ import { inquirySchema } from '@/lib/schemas';
 import { getCurrentUser } from '@/lib/auth';
 import { errorResponse, validationError, handleServerError } from '@/lib/api-utils';
 import { rateLimit, getClientIP } from '@/lib/rate-limit';
+import { logActivity } from '@/lib/logger';
 import { sendInquiryNotification } from '@/lib/mailer';
 
 // POST /api/inquiry — Submit new inquiry (public)
@@ -37,6 +38,13 @@ export async function POST(request: Request) {
     };
 
     const result = await collection.insertOne(newInquiry);
+
+    logActivity({
+      action: 'inquiry.create',
+      userEmail: email,
+      metadata: { inquiryId: result.insertedId.toString(), subject, studentClass: parsed.data.studentClass },
+      ip,
+    }).catch(() => {});
 
     // Fire-and-forget: send admin email notification (never blocks the response)
     sendInquiryNotification({ name, email, phone, studentClass, subject, message })
@@ -88,13 +96,13 @@ export async function GET() {
 }
 
 // PATCH /api/inquiry — Update inquiry status (admin only)
-export async function PATCH(request: Request) {
+export async function PATCH(req: Request) {
   try {
     const user = await getCurrentUser();
     if (!user) return errorResponse('Please log in.', 401);
     if (user.role !== 'admin') return errorResponse('Admin access required.', 403);
 
-    const body = await request.json();
+    const body = await req.json();
     const { id, status } = body;
 
     if (!id || !status || !['new', 'contacted', 'resolved'].includes(status)) {
@@ -112,6 +120,14 @@ export async function PATCH(request: Request) {
     if (result.matchedCount === 0) {
       return errorResponse('Inquiry not found.', 404);
     }
+
+    logActivity({
+      action: 'inquiry.status_update',
+      userId: user.id,
+      userEmail: user.email,
+      metadata: { inquiryId: id, status },
+      ip: getClientIP(req),
+    }).catch(() => {});
 
     return NextResponse.json({ success: true, message: 'Inquiry status updated.' });
   } catch (error: unknown) {

@@ -8,6 +8,7 @@ import Header from '@/components/Header';
 import { useToast } from '@/components/Toast';
 import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
+import { trackEvent } from '@/lib/gtag';
 import { theme, typo } from '@/styles';
 import { courses, instructors } from '@/data/courses';
 import { courseImages, teacherImages, images } from '@/data/images';
@@ -57,6 +58,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
       });
       const data = await res.json();
       if (data.success) {
+        trackEvent('enrollment', { course_id: resolvedParams.id });
         setIsEnrolled(true);
         setEnrollMsg(data.message);
         showToast('Enrolled! Check your email for confirmation.', 'success');

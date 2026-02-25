@@ -51,7 +51,17 @@ interface AttendanceSummary {
   percentage: number;
 }
 
-type Tab = 'inquiries' | 'students' | 'enrollments' | 'attendance';
+interface ActivityLog {
+  _id: string;
+  action: string;
+  userId: string | null;
+  userEmail: string | null;
+  metadata: Record<string, unknown>;
+  ip: string | null;
+  createdAt: string;
+}
+
+type Tab = 'inquiries' | 'students' | 'enrollments' | 'attendance' | 'activity';
 
 export default function AdminPage() {
   const router = useRouter();
@@ -71,6 +81,9 @@ export default function AdminPage() {
   // Enrollments state
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [enrollFilter, setEnrollFilter] = useState<string>('all');
+
+  // Activity state
+  const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
 
   // Attendance state
   const [attEnrollmentId, setAttEnrollmentId] = useState<string>('');
@@ -110,6 +123,14 @@ export default function AdminPage() {
     if (data.success) setEnrollments(data.enrollments);
   }, [router]);
 
+  const fetchActivity = useCallback(async () => {
+    const res = await fetch('/api/admin/activity');
+    if (res.status === 401) { router.push('/login'); return; }
+    if (res.status === 403) { router.push('/feed'); return; }
+    const data = await res.json();
+    if (data.success) setActivityLogs(data.logs);
+  }, [router]);
+
   // Lazy-load tab data: only fetch when tab becomes active
   const [fetchedTabs, setFetchedTabs] = useState<Set<Tab>>(new Set());
 
@@ -127,6 +148,7 @@ export default function AdminPage() {
     if (fetchedTabs.has('inquiries')) tasks.push(fetchInquiries());
     if (fetchedTabs.has('students')) tasks.push(fetchStudents(1, studentSearch));
     if (fetchedTabs.has('enrollments') || fetchedTabs.has('attendance')) tasks.push(fetchEnrollments());
+    if (fetchedTabs.has('activity')) tasks.push(fetchActivity());
     if (tasks.length === 0) {
       setIsLoading(false);
       return;
@@ -134,7 +156,7 @@ export default function AdminPage() {
     Promise.all(tasks)
       .catch(() => setError('Failed to load data.'))
       .finally(() => setIsLoading(false));
-  }, [fetchedTabs, fetchInquiries, fetchStudents, fetchEnrollments, studentSearch]);
+  }, [fetchedTabs, fetchInquiries, fetchStudents, fetchEnrollments, fetchActivity, studentSearch]);
 
   // ─── Actions ────────────────────────────────────
   const updateInquiryStatus = async (id: string, newStatus: string) => {
@@ -210,6 +232,7 @@ export default function AdminPage() {
     { id: 'students', label: 'Students', count: students.length },
     { id: 'enrollments', label: 'Enrollments', count: enrollments.length },
     { id: 'attendance', label: 'Attendance', count: enrollments.filter((e) => e.status === 'active').length },
+    { id: 'activity', label: 'Activity', count: activityLogs.length },
   ];
 
   if (isLoading) {
@@ -616,6 +639,57 @@ export default function AdminPage() {
                         </div>
                       );
                     })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ─── Activity Tab ─────────────────── */}
+          {activeTab === 'activity' && (
+            <div>
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className={`${typo.h2} ${theme.textHeading}`}>Activity Logs</h2>
+                <button
+                  onClick={() => fetchActivity()}
+                  className={`rounded-lg px-3 py-1.5 text-sm font-medium ${theme.btnOutline}`}
+                >
+                  Refresh
+                </button>
+              </div>
+              {activityLogs.length === 0 ? (
+                <div className={`${theme.card} p-12 text-center`}>
+                  <p className={theme.textMuted}>No activity logs yet.</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[600px]">
+                    <thead>
+                      <tr className={`border-b ${theme.borderCard}`}>
+                        <th className={`pb-3 text-left text-xs font-semibold uppercase ${theme.textMuted}`}>Time</th>
+                        <th className={`pb-3 text-left text-xs font-semibold uppercase ${theme.textMuted}`}>Action</th>
+                        <th className={`pb-3 text-left text-xs font-semibold uppercase ${theme.textMuted}`}>User</th>
+                        <th className={`pb-3 text-left text-xs font-semibold uppercase ${theme.textMuted}`}>Metadata</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {activityLogs.map((log) => (
+                        <tr key={log._id} className={`border-b ${theme.borderCard}`}>
+                          <td className={`py-2 text-sm ${theme.textBody}`}>
+                            {new Date(log.createdAt).toLocaleString()}
+                          </td>
+                          <td className={`py-2 font-mono text-sm ${theme.textAccent}`}>{log.action}</td>
+                          <td className={`py-2 text-sm ${theme.textBody}`}>
+                            {log.userEmail || log.userId || '—'}
+                          </td>
+                          <td className={`py-2 text-xs ${theme.textMuted}`}>
+                            {Object.keys(log.metadata || {}).length > 0
+                              ? JSON.stringify(log.metadata)
+                              : '—'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
             </div>

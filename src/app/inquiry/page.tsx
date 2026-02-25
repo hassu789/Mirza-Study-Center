@@ -9,6 +9,7 @@ import AnimatedSection from '@/components/AnimatedSection';
 import { images } from '@/data/images';
 import { contact } from '@/data/contact';
 import { useToast } from '@/components/Toast';
+import { trackEvent } from '@/lib/gtag';
 import { validateName, validateEmail, validatePhone } from '@/utils/validation';
 
 interface FormData {
@@ -118,6 +119,7 @@ export default function InquiryPage() {
 
       if (response.ok) {
         setSubmitStatus('success');
+        trackEvent('inquiry_submit', { form_class: formData.studentClass, form_subject: formData.subject });
         showToast('Inquiry submitted! We\'ll contact you soon.', 'success');
         setFormData({ name: '', email: '', phone: '', studentClass: '', subject: '', message: '' });
         setErrors({});

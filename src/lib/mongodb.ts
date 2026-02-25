@@ -76,6 +76,14 @@ async function ensureIndexes(db: Db) {
       db.collection("attendance").createIndex({ enrollmentId: 1 }),
       // Newsletter subscribers
       db.collection("newsletter").createIndex({ email: 1 }, { unique: true }),
+      // Activity logs
+      db.collection("activity_logs").createIndex({ createdAt: -1 }),
+      db
+        .collection("activity_logs")
+        .createIndex(
+          { createdAt: 1 },
+          { expireAfterSeconds: 90 * 24 * 60 * 60 }
+        ),
     ]);
     globalWithMongo._indexesCreated = true;
   } catch (err) {

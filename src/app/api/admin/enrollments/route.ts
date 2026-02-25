@@ -2,7 +2,9 @@ import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
 import { connectToDatabase } from '@/lib/mongodb';
 import { getCurrentUser } from '@/lib/auth';
+import { logActivity } from '@/lib/logger';
 import { errorResponse, handleServerError } from '@/lib/api-utils';
+import { getClientIP } from '@/lib/rate-limit';
 import { courses } from '@/data/courses';
 
 // GET /api/admin/enrollments — List all enrollments (admin only)
@@ -105,6 +107,14 @@ export async function PATCH(request: Request) {
     if (result.matchedCount === 0) {
       return errorResponse('Enrollment not found', 404);
     }
+
+    logActivity({
+      action: 'enrollment.update',
+      userId: user.id,
+      userEmail: user.email,
+      metadata: { enrollmentId, ...update },
+      ip: getClientIP(request),
+    }).catch(() => {});
 
     return NextResponse.json({ success: true, message: 'Enrollment updated.' });
   } catch (error: unknown) {

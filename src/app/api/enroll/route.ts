@@ -4,7 +4,9 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { enrollSchema } from '@/lib/schemas';
 import { getCurrentUser } from '@/lib/auth';
 import { sendEnrollmentConfirmation } from '@/lib/mailer';
+import { logActivity } from '@/lib/logger';
 import { errorResponse, validationError, handleServerError } from '@/lib/api-utils';
+import { getClientIP } from '@/lib/rate-limit';
 import { courses } from '@/data/courses';
 
 // POST /api/enroll — Enroll in a course (logged-in students only)
@@ -46,6 +48,14 @@ export async function POST(request: Request) {
       status: 'active',
       paymentStatus: 'pending',
     });
+
+    logActivity({
+      action: 'enrollment.create',
+      userId: user.id,
+      userEmail: user.email,
+      metadata: { courseId, courseTitle: course.title },
+      ip: getClientIP(request),
+    }).catch(() => {});
 
     sendEnrollmentConfirmation({
       studentName: user.name,

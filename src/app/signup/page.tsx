@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { theme } from '@/styles';
 import AnimatedSection from '@/components/AnimatedSection';
 import { images } from '@/data/images';
+import { trackEvent } from '@/lib/gtag';
 import { validateName, validateEmail, validatePassword, validateConfirmPassword } from '@/utils/validation';
 
 interface FieldErrors {
@@ -123,6 +124,7 @@ export default function SignupPage() {
       const data = await response.json();
 
       if (data.success) {
+        trackEvent('sign_up', { method: 'email' });
         router.push('/feed');
         router.refresh();
       } else {

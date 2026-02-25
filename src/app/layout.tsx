@@ -3,6 +3,9 @@ import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { ToastProvider } from "@/components/Toast";
 import { contact } from "@/data/contact";
@@ -86,10 +89,13 @@ export default function RootLayout({
       <body
         className={`${GeistSans.variable} ${GeistMono.variable} antialiased`}
       >
+        <GoogleAnalytics />
         <ToastProvider>
           {children}
           <WhatsAppButton />
         </ToastProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

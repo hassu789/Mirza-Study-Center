@@ -5,6 +5,7 @@ import { signupSchema } from '@/lib/schemas';
 import { createSession } from '@/lib/auth';
 import { errorResponse, validationError, handleServerError } from '@/lib/api-utils';
 import { rateLimit, getClientIP } from '@/lib/rate-limit';
+import { logActivity } from '@/lib/logger';
 
 export const maxDuration = 10;
 
@@ -49,6 +50,13 @@ export async function POST(request: Request) {
       email,
       role: 'user',
     });
+
+    logActivity({
+      action: 'user.signup',
+      userId: result.insertedId.toString(),
+      userEmail: email,
+      ip,
+    }).catch(() => {});
 
     return NextResponse.json({
       success: true,
